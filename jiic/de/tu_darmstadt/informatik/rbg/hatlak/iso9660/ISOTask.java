@@ -1,5 +1,5 @@
 /*  
- *  JIIC: Java ISO Image Creator. Copyright (C) 2007, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
+ *  JIIC: Java ISO Image Creator. Copyright (C) 2007-2009, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -44,9 +44,10 @@ public class ISOTask extends MatchingTask {
 		bootImageEmulation, bootImagePlatformID, movedDirectoriesStoreName;
 	private boolean allowASCII, restrictDirDepthTo8, forceDotDelimiter,
 		mkisofsCompatibility, forcePortableFilenameCharacterSet,
-		enableJoliet, enableRockRidge, hideMovedDirectoriesStore, verbose;
+		enableJoliet, enableRockRidge, hideMovedDirectoriesStore, verbose,
+		genBootInfoTable, padEnd;
 	private int interchangeLevel, bootImageSectorCount, bootImageLoadSegment;
-	
+
 	public void init() {
 		baseDir = destFile = bootImage = null;
 		filesets = new Vector();
@@ -66,8 +67,10 @@ public class ISOTask extends MatchingTask {
 		bootImageSectorCount = 1;
 		bootImageLoadSegment = ElToritoConfig.LOAD_SEGMENT_7C0;
 		bootImageEmulation = bootImagePlatformID = "";
+		genBootInfoTable = false;
+		padEnd = true;
 	}
-	
+
 	public void execute() throws BuildException {
 		if (baseDir == null && filesets.size()==0) {
 			throw new BuildException("basedir attribute must be set, "
@@ -103,6 +106,7 @@ public class ISOTask extends MatchingTask {
 			iso9660Config.restrictDirDepthTo8(restrictDirDepthTo8);
 			iso9660Config.forceDotDelimiter(forceDotDelimiter);
 			iso9660Config.setInterchangeLevel(interchangeLevel);
+			iso9660Config.setPadEnd(padEnd);
 			if (copyrightFileObj!=null) {
 				iso9660Config.setCopyrightFile(copyrightFileObj);
 			}
@@ -139,6 +143,7 @@ public class ISOTask extends MatchingTask {
 				elToritoConfig = new ElToritoConfig(bootImage, getBootEmulation(),
 						getBootPlatformID(), bootImageID, bootImageSectorCount,
 						bootImageLoadSegment);
+				elToritoConfig.setGenBootInfoTable(genBootInfoTable);
 			}
 	
 			CreateISO iso = new CreateISO(new ISOImageFileHandler(destFile), root);
@@ -363,5 +368,13 @@ public class ISOTask extends MatchingTask {
 
 	public void setMovedDirectoriesStoreName(String movedDirectoriesStoreName) {
 		this.movedDirectoriesStoreName = movedDirectoriesStoreName;
+	}
+
+	public void setGenBootInfoTable(boolean genBootInfoTable) {
+		this.genBootInfoTable = genBootInfoTable;
+	}
+
+	public void setPadEnd(boolean padEnd) {
+		this.padEnd = padEnd;
 	}
 }

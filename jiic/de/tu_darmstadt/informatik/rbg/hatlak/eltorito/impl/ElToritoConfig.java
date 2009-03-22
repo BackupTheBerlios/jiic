@@ -1,5 +1,5 @@
 /*  
- *  JIIC: Java ISO Image Creator. Copyright (C) 2007, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
+ *  JIIC: Java ISO Image Creator. Copyright (C) 2007-2009, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public class ElToritoConfig extends BootConfig {
-	private boolean bootable;
+	private boolean bootable, genBootInfoTable;
 	private int platformID, bootMediaType, loadSegment, systemType, sectorCount;
 	private String idString;
 	private ISO9660File bootImage;
@@ -39,7 +39,7 @@ public class ElToritoConfig extends BootConfig {
 	public static int BOOT_MEDIA_TYPE_2_88MEG_DISKETTE = 3;
 	public static int BOOT_MEDIA_TYPE_HD = 4;
 	public static int LOAD_SEGMENT_7C0 = 0;
-	
+
 	/**
 	 * El Torito Boot Image configuration
 	 * 
@@ -62,6 +62,7 @@ public class ElToritoConfig extends BootConfig {
 		this.sectorCount = sectorCount;
 		setPlatformID(platformID);
 		setEmulation(emulation);
+		genBootInfoTable = false;
 	}
 
 	/**
@@ -72,7 +73,16 @@ public class ElToritoConfig extends BootConfig {
 	public ISO9660File getBootImage() {
 		return bootImage;
 	}
-	
+
+	/**
+	 * Set Boot Image
+	 * 
+	 * @param bootImage Boot Image
+	 */
+	public void setBootImage(ISO9660File bootImage) {
+		this.bootImage = bootImage;
+	}
+
 	/**
 	 * Returns whether the Boot Image is bootable
 	 * 
@@ -81,7 +91,7 @@ public class ElToritoConfig extends BootConfig {
 	public boolean getBootable() {
 		return bootable;
 	}
-	
+
 	/**
 	 * Make bootable
 	 * 
@@ -90,7 +100,29 @@ public class ElToritoConfig extends BootConfig {
 	public void setBootable(boolean bootable) {
 		this.bootable = bootable;
 	}
-	
+
+	/**
+	 * Set Boot Info Table (only allowed for no-emulation images)
+	 * 
+	 * @param genBootInfoTable Whether to generate a boot info table
+	 */
+	public void setGenBootInfoTable(boolean genBootInfoTable) throws ConfigException {
+		if (!genBootInfoTable || this.bootMediaType == ElToritoConfig.BOOT_MEDIA_TYPE_NO_EMU) {
+			this.genBootInfoTable = genBootInfoTable;
+		} else {
+			throw new ConfigException(this, "Boot info table generation requires no-emulation image.");
+		}
+	}
+
+	/**
+	 * Generate Boot Info Table
+	 * 
+	 * @return Whether a boot info table is to be generated
+	 */
+	public boolean getGenBootInfoTable() {
+		return this.genBootInfoTable;
+	}
+
 	/**
 	 * Set Platform Identifier
 	 * 
@@ -103,13 +135,12 @@ public class ElToritoConfig extends BootConfig {
 		} else {
 			throw new ConfigException(this, "Invalid Platform ID: " + platformID);
 		}
-		
 	}
-	
+
 	/**
 	 * Returns active Platform Identifier
 	 * 
-	 * @return
+	 * @return Platform Identifier
 	 */
 	public int getPlatformID() {
 		return platformID;
@@ -127,7 +158,7 @@ public class ElToritoConfig extends BootConfig {
 		}
 		this.idString = idString;
 	}
-	
+
 	/**
 	 * Returns active Identifier String
 	 * 
@@ -168,7 +199,7 @@ public class ElToritoConfig extends BootConfig {
 	public int getLoadSegment() {
 		return loadSegment;
 	}
-	
+
 	/**
 	 * Set Load Segment
 	 * 

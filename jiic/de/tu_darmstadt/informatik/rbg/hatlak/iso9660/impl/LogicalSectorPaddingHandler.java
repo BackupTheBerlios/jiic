@@ -1,5 +1,5 @@
 /*  
- *  JIIC: Java ISO Image Creator. Copyright (C) 2007, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
+ *  JIIC: Java ISO Image Creator. Copyright (C) 2007-2009, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,13 +28,18 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
 public class LogicalSectorPaddingHandler extends ChainingStreamHandler {
 	private long bytesWritten;
 	private Stack elements;
-	
+	private boolean padEnd;
+
 	public LogicalSectorPaddingHandler(StructureHandler chainingStructureHandler, ContentHandler chainingContentHandler) {
 		super(chainingStructureHandler, chainingContentHandler);
 		bytesWritten = 0;
 		elements = new Stack();
 	}
-	
+
+	public void setPadEnd(boolean padEnd) {
+		this.padEnd = padEnd;
+	}
+
 	public void startElement(Element element) throws HandlerException {
 		if (element instanceof LogicalSectorElement || isSAElement(element)) {
 			// Reset byte counter
@@ -58,12 +63,12 @@ public class LogicalSectorPaddingHandler extends ChainingStreamHandler {
 		bytesWritten += reference.getLength();
 		super.data(reference);
 	}
-	
+
 	public Fixup fixup(DataReference reference) throws HandlerException {
 		bytesWritten += reference.getLength();
 		return super.fixup(reference);
 	}
-	
+
 	public void endElement() throws HandlerException {
 		Object element = elements.pop();
 		if (element instanceof LogicalSectorElement) {
@@ -77,5 +82,13 @@ public class LogicalSectorPaddingHandler extends ChainingStreamHandler {
 			super.data(new EmptyByteArrayDataReference(pad));				
 		}
 		super.endElement();
+	}
+
+	public void endDocument() throws HandlerException {
+		if (padEnd) {
+			// Pad to 150 sectors (like mkisofs -pad does)
+			int pad = (int) (150*ISO9660Constants.LOGICAL_SECTOR_SIZE - bytesWritten % 16*ISO9660Constants.LOGICAL_SECTOR_SIZE);
+			super.data(new EmptyByteArrayDataReference(pad));
+		}
 	}
 }

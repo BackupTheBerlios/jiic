@@ -1,5 +1,5 @@
 /*  
- *  JIIC: Java ISO Image Creator. Copyright (C) 2007, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
+ *  JIIC: Java ISO Image Creator. Copyright (C) 2007-2009, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ import java.lang.Character.UnicodeBlock;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
 
 public class ISO9660Config extends StandardConfig {
-	private boolean restrictDirDepthTo8, allowASCII;
+	private boolean restrictDirDepthTo8, allowASCII, padEnd;
 	
 	public ISO9660Config() {
 		super();
@@ -128,6 +128,14 @@ public class ISO9660Config extends StandardConfig {
 
 	public void setVolumeSetID(String volumeSetID) throws ConfigException {
 		super.setVolumeSetID(checkDString(volumeSetID));
+	}
+
+	public void setPadEnd(boolean padEnd) {
+		this.padEnd = padEnd;
+	}
+
+	public boolean getPadEnd() {
+		return this.padEnd;
 	}
 
 	private String checkAString(String string) {

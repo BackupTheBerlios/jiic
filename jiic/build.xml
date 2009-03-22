@@ -60,6 +60,10 @@
 	(String: Boot image emulation type. Default: None)
   bootImagePlatformID
 	(String: Boot image platform identifier)
+  genBootInfoTable
+	(boolean: Generate Boot Info Table, cf. mkisofs -boot-info-table)
+  padEnd
+	(boolean: Pad ISO image to 150 logical sectors, cf. mkisofs -pad)
 />
 
 <fileset

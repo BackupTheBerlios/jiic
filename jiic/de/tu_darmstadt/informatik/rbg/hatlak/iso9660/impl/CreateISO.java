@@ -1,5 +1,5 @@
 /*  
- *  JIIC: Java ISO Image Creator. Copyright (C) 2007, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
+ *  JIIC: Java ISO Image Creator. Copyright (C) 2007-2009, Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -40,6 +40,7 @@ public class CreateISO {
 		if (iso9660Config==null) {
 			throw new NullPointerException("Cannot create ISO without ISO9660Config.");
 		}
+		((LogicalSectorPaddingHandler) streamHandler).setPadEnd(iso9660Config.getPadEnd());
 
 		// Last handler added processes data first
 		if (jolietConfig!=null) {
