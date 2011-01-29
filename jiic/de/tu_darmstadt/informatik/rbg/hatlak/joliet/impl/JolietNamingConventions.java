@@ -35,7 +35,7 @@ public class JolietNamingConventions extends NamingConventions {
 	
 	public void apply(ISO9660Directory dir) throws HandlerException {
 		// Joliet directory name restrictions:
-		// name <= 128 bytes (64 characters)
+		// Directory Identifier length (filename) <= 128 bytes (64 characters)
 		// name may contain extension
 		// name non-empty
 		
@@ -54,17 +54,17 @@ public class JolietNamingConventions extends NamingConventions {
 
 	public void apply(ISO9660File file) throws HandlerException {
 		// Joliet file name restrictions:
-		// filename + extension <= 128 bytes (64 characters)
+		// File Identifier length (filename + extension + overhead) <= 128 bytes (64 characters)
 		// either filename or extension non-empty
 		
 		String filename = normalize(file.getFilename());
 		String extension = normalize(file.getExtension());
 		file.enforceDotDelimiter(FORCE_DOT_DELIMITER);
-
+		
 		if (filename.length()==0 && extension.length()==0) {
 			throw new HandlerException(getID() + ": Empty file name encountered.");
 		}
-			
+		
 		if (file.enforces8plus3()) {
 			if (filename.length() > 8) {
 				filename = filename.substring(0, 8);
@@ -78,14 +78,15 @@ public class JolietNamingConventions extends NamingConventions {
 				}
 			}
 		}
-			
-		if (filename.length() + extension.length() + (file.getVersion()+"").length() + 2 > 64) {
+		
+		int versionAndSeparatorsLength = (file.getVersion()+"").length() + 2; // ;. -> 2
+		if (filename.length() + extension.length() + versionAndSeparatorsLength > 64) {
 			if (filename.length() >= extension.length()) {
 				// Shorten filename
-				filename = filename.substring(0, 64-extension.length());
+				filename = filename.substring(0, 64 - (extension.length() + versionAndSeparatorsLength));
 			} else {
 				// Shorten extension
-				extension = extension.substring(0, 64-filename.length());				
+				extension = extension.substring(0, 64 - (filename.length() + versionAndSeparatorsLength));
 			}
 		}
 		
