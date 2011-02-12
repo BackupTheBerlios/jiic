@@ -48,6 +48,17 @@ public class JolietConfig extends StandardConfig {
 	}
 
 	/**
+	 * Allow Long File Names
+	 * @param allow Whether to allow long file names
+	 */
+	public void allowLongNames(boolean allow) {
+		JolietNamingConventions.MAX_NAME_LENGTH = allow ? 103 : 64;
+		if (allow) {
+			System.out.println("Warning: Allowing long file names breaks Joliet conformance.");
+		}
+	}
+	
+	/**
 	 * Set UCS-2 Level
 	 * 
 	 * @see http://www.nada.kth.se/i18n/ucs/unicode-iso10646-oview.html

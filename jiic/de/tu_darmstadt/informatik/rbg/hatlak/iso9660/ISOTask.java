@@ -45,7 +45,7 @@ public class ISOTask extends MatchingTask {
 	private boolean allowASCII, restrictDirDepthTo8, forceDotDelimiter,
 		mkisofsCompatibility, forcePortableFilenameCharacterSet,
 		enableJoliet, enableRockRidge, hideMovedDirectoriesStore, verbose,
-		genBootInfoTable, padEnd;
+		genBootInfoTable, padEnd, allowLongJolietNames;
 	private int interchangeLevel, bootImageSectorCount, bootImageLoadSegment;
 
 	public void init() {
@@ -69,6 +69,7 @@ public class ISOTask extends MatchingTask {
 		bootImageEmulation = bootImagePlatformID = "";
 		genBootInfoTable = false;
 		padEnd = true;
+		allowLongJolietNames = false;
 	}
 
 	public void execute() throws BuildException {
@@ -131,6 +132,7 @@ public class ISOTask extends MatchingTask {
 				jolietConfig.setPublisher(publisher);
 				jolietConfig.setDataPreparer(dataPreparer);
 				jolietConfig.forceDotDelimiter(forceDotDelimiter);
+				jolietConfig.allowLongNames(allowLongJolietNames);
 				if (copyrightFileObj!=null) {
 					jolietConfig.setCopyrightFile(copyrightFileObj);
 				}
@@ -376,5 +378,9 @@ public class ISOTask extends MatchingTask {
 
 	public void setPadEnd(boolean padEnd) {
 		this.padEnd = padEnd;
+	}
+
+	public void setAllowLongJolietNames(boolean allow) {
+		this.allowLongJolietNames = allow;
 	}
 }

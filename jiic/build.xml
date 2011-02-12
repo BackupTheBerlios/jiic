@@ -61,9 +61,11 @@
   bootImagePlatformID
 	(String: Boot image platform identifier)
   genBootInfoTable
-	(boolean: Generate Boot Info Table, cf. mkisofs -boot-info-table)
+	(boolean: Generate Boot Info Table, cf. mkisofs -boot-info-table. Default: no)
   padEnd
-	(boolean: Pad ISO image to 150 logical sectors, cf. mkisofs -pad)
+	(boolean: Pad ISO image to 150 logical sectors, cf. mkisofs -pad. Default: yes)
+  allowLongJolietNames
+	(boolean: Allow up to 103 Unicode character for Joliet instead of 64, cf. mkisofs -joliet-long. Default: no)  
 />
 
 <fileset
@@ -93,6 +95,12 @@
 		bootImage="tomsrtbt-2.0.103.ElTorito.288.img"
 		bootImageSectorCount="1" bootImageEmulation="2.88"
 		bootImagePlatformID="X86"
+	/>
+</target>
+
+<target name="longtest">
+	<iso destfile="longtest.iso" basedir="test" name="longtest"
+		interchangeLevel="2" allowLongJolietNames="yes"
 	/>
 </target>
 

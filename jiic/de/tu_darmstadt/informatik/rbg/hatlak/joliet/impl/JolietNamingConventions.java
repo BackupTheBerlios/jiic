@@ -28,6 +28,7 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public class JolietNamingConventions extends NamingConventions {
 	public static boolean FORCE_DOT_DELIMITER = true;
+	public static int MAX_NAME_LENGTH = 64;
 
 	public JolietNamingConventions() {
 		super("Joliet");
@@ -41,8 +42,8 @@ public class JolietNamingConventions extends NamingConventions {
 		
 		String filename = normalize(dir.getName());
 		
-		if (filename.length() > 64) {
-			filename = filename.substring(0, 64);
+		if (filename.length() > MAX_NAME_LENGTH) {
+			filename = filename.substring(0, MAX_NAME_LENGTH);
 		}
 		
 		if (filename.length()==0) {
@@ -80,13 +81,13 @@ public class JolietNamingConventions extends NamingConventions {
 		}
 		
 		int versionAndSeparatorsLength = (file.getVersion()+"").length() + 2; // ;. -> 2
-		if (filename.length() + extension.length() + versionAndSeparatorsLength > 64) {
+		if (filename.length() + extension.length() + versionAndSeparatorsLength > MAX_NAME_LENGTH) {
 			if (filename.length() >= extension.length()) {
 				// Shorten filename
-				filename = filename.substring(0, 64 - (extension.length() + versionAndSeparatorsLength));
+				filename = filename.substring(0, MAX_NAME_LENGTH - (extension.length() + versionAndSeparatorsLength));
 			} else {
 				// Shorten extension
-				extension = extension.substring(0, 64 - (filename.length() + versionAndSeparatorsLength));
+				extension = extension.substring(0, MAX_NAME_LENGTH - (filename.length() + versionAndSeparatorsLength));
 			}
 		}
 		
