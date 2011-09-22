@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: jiic
+Bundle-SymbolicName: jiic
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: lib/sabre.jar,
+ lib/iso9660.jar
+Export-Package: de.tu_darmstadt.informatik.rbg.hatlak.eltorito.impl,
+ de.tu_darmstadt.informatik.rbg.hatlak.iso9660,
+ de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl,
+ de.tu_darmstadt.informatik.rbg.hatlak.iso9660.volumedescriptors,
+ de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl,
+ de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl,
+ de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl,
+ de.tu_darmstadt.informatik.rbg.mhartle.sabre,
+ de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl
+Require-Bundle: org.apache.ant
