@@ -19,7 +19,7 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
-public interface ISO9660HierarchyObject extends Cloneable, Comparable {
+public interface ISO9660HierarchyObject extends Cloneable, Comparable<ISO9660HierarchyObject> {
 	/**
 	 * Returns the name of the hierarchy object
 	 * 

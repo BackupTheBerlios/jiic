@@ -29,7 +29,7 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
-public class ISO9660File extends File implements ISO9660HierarchyObject {
+public class ISO9660File implements ISO9660HierarchyObject {
 	public static final Pattern FILEPATTERN = Pattern.compile("^([^.]+)\\.(.+)$");
 	private boolean enforceDotDelimiter = false;
 	private static final long serialVersionUID = 1L;
@@ -38,6 +38,7 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 	private boolean enforce8plus3, isMovedDirectory;
 	private ISO9660Directory parent;
 	private Object id;
+	private File file;
 
 	/**
 	 * Create file from File object
@@ -47,7 +48,7 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 	 * @throws HandlerException Invalid File version or file is a directory
 	 */
 	public ISO9660File(File file, int version) throws HandlerException {
-		super(file.getPath());
+		this.file = file;
 		setName(file.getName());
 		setVersion(version);
 		id = new Object();
@@ -67,8 +68,8 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 	 * @throws HandlerException Invalid File version or file is a directory
 	 */
 	public ISO9660File(String pathname, int version) throws HandlerException {
-		super(pathname);
-		setName(super.getName());
+		this.file = new File(pathname);
+		setName(this.file.getName());
 		setVersion(version);
 		id = new Object();
 		enforce8plus3 = false;
@@ -79,6 +80,16 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 		}		
 	}
 
+	/**
+	 * Create File
+	 * 
+	 * @param file File
+	 * @throws HandlerException File is a directory
+	 */
+	public ISO9660File(ISO9660File file) throws HandlerException {
+		this(file.file);
+	}
+	
 	/**
 	 * Create File
 	 * 
@@ -265,7 +276,7 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 		this.enforceDotDelimiter = force;
 	}
 
-	public int compareTo(Object object) throws ClassCastException, NullPointerException {
+	public int compareTo(ISO9660HierarchyObject object) throws ClassCastException, NullPointerException {
 		// Alphanumerical case-insensitive sort (according to ISO9660 needs)
 		if (object==null) {
 			throw new NullPointerException();
@@ -301,6 +312,7 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 		}		
 	}
 	
+	@Override
 	public boolean equals(Object toCompare) {
 		if (toCompare instanceof ISO9660File) {
 			return ((ISO9660File) toCompare).getContentID().equals(getContentID());
@@ -308,6 +320,7 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return super.hashCode();
 	}
@@ -349,7 +362,32 @@ public class ISO9660File extends File implements ISO9660HierarchyObject {
 		return getParentDirectory().getRoot();
 	}
 	
-	public Object clone() {
+	public boolean isDirectory() {
+		return file.isDirectory();
+	}
+	
+	public long length() {
+		return file.length();
+	}
+	
+	public long lastModified() {
+		return file.lastModified();
+	}
+	
+	public File getAbsoluteFile() {
+		return file.getAbsoluteFile();
+	}
+
+	public String getAbsolutePath() {
+		return file.getAbsolutePath();
+	}
+	
+	public File getFile() {
+		return file;
+	}
+	
+	@Override
+	public ISO9660File clone() {
 		ISO9660File clone = null;
 		try {
 			clone = (ISO9660File) super.clone();

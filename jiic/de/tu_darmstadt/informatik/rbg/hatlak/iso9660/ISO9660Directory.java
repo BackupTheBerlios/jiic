@@ -381,7 +381,7 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 		}
 	}
 	
-	public int compareTo(Object object) throws ClassCastException, NullPointerException {
+	public int compareTo(ISO9660HierarchyObject object) throws ClassCastException, NullPointerException {
 		// Alphanumerical case-insensitive sort (according to ISO9660 needs)
 		if (object==null) {
 			throw new NullPointerException();

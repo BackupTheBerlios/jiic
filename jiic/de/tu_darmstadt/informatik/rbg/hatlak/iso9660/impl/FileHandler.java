@@ -19,11 +19,17 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660RootDirectory;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Element;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ChainingStreamHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.FileDataReference;
 
 public class FileHandler extends ChainingStreamHandler {
 	private ISO9660RootDirectory root;
@@ -33,6 +39,7 @@ public class FileHandler extends ChainingStreamHandler {
 		this.root = root;
 	}
 	
+	@Override
 	public void startElement(Element element) throws HandlerException {
 		if (element instanceof ISO9660Element) {
 			String id = (String) element.getId();
@@ -50,18 +57,18 @@ public class FileHandler extends ChainingStreamHandler {
 	private void doFCA() throws HandlerException {
 		doFCADirs(root);
 				
-		Iterator it = root.sortedIterator();
+		Iterator<ISO9660Directory> it = root.sortedIterator();
 		while (it.hasNext()) {
-			ISO9660Directory dir = (ISO9660Directory) it.next();
+			ISO9660Directory dir = it.next();
 			doFCADirs(dir);
 		}
 	}
 	
 	private void doFCADirs(ISO9660Directory dir) throws HandlerException {
-		Vector files = dir.getFiles();
-		Iterator fit = files.iterator();
+		List<ISO9660File> files = dir.getFiles();
+		Iterator<ISO9660File> fit = files.iterator();
 		while (fit.hasNext()) {
-			ISO9660File file = (ISO9660File) fit.next();
+			ISO9660File file = fit.next();
 			doFile(file);
 		}
 	}
@@ -69,7 +76,7 @@ public class FileHandler extends ChainingStreamHandler {
 	private void doFile(ISO9660File file) throws HandlerException {
 		super.startElement(new FileElement(file));
 
-		FileDataReference fdr = new FileDataReference(file);
+		FileDataReference fdr = new FileDataReference(file.getFile());
 		data(fdr);
 
 		super.endElement();
