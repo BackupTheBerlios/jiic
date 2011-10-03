@@ -32,34 +32,37 @@ public class ISOtest {
 	private static boolean enableElTorito = true;
 
 	private static void handleOption(String option) {
-	  if (option.equals("disable-joliet")) {
-		  enableJoliet = false;
-	  } else
-	  if (option.equals("disable-rockridge")) {
-		  enableRockRidge = false;
-	  } else
-	  if (option.equals("disable-eltorito")) {
-		  enableElTorito = false;
-	  }
+		if (option.equals("disable-joliet")) {
+			System.out.println("Skipping joliet");
+			enableJoliet = false;
+		} else if (option.equals("disable-rockridge")) {
+			System.out.println("Skipping rockridge");
+			enableRockRidge = false;
+		} else if (option.equals("disable-eltorito")) {
+			System.out.println("Skipping eltorito");
+			enableElTorito = false;
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
 		// Output file
-		File outfile = new File(args.length>0 ? args[0] : "ISOTest.iso");
+		File outfile = new File(args.length > 0 ? args[0] : "ISOTest.iso");
 
 		// Directory hierarchy, starting from the root
 		ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
 		ISO9660RootDirectory root = new ISO9660RootDirectory();
 
-		if (args.length>1) {
-			// Record specified files and directories
-
-			for (int i=1; i<args.length; i++) {
-				if (args[i].startsWith("--")) {
-					handleOption(args[i].substring(2, args[i].length()));
+		boolean files_added = false;
+	
+		if (args.length > 1) {
+			for (int i = 1; i < args.length; i++) {
+				String arg = args[i];
+				
+				if (arg.startsWith("--")) {
+					handleOption(arg.substring(2));
 				} else {
 					// Add file or directory contents recursively
-					File file = new File(args[i]);
+					File file = new File(arg);
 					if (file.exists()) {
 						if (file.isDirectory()) {
 							root.addContentsRecursively(file);
@@ -67,9 +70,12 @@ public class ISOtest {
 							root.addFile(file);
 						}
 					}
+					files_added = true;
 				}
 			}
-		} else {
+		}
+			
+		if (!files_added) {
 			// Record test cases
 
 			// Very long filename: a...z
@@ -102,7 +108,7 @@ public class ISOtest {
 			// (file without extension, tar.gz, deeply nested directory;
 			// sort order tests, renaming tests: filename + extension,
 			// directory with many files: sector end test)
-			root.addRecursively(new File("test"));
+			root.addRecursively(new File("testsuite"));
 
 			// Dirs to appear in order A, B, Aeins, Azwei, Cubase, Beins, Bzwei
 			ISO9660Directory subdirA = root.addDirectory("A");
@@ -114,11 +120,11 @@ public class ISOtest {
 
 			// Files with different versions
 			// (to appear in descending order, pointing to same LSN)
-			ISO9660File file1 = new ISO9660File("test/tux.gif", 1);
+			ISO9660File file1 = new ISO9660File("testsuite/tux.gif", 1);
 			root.addFile(file1);
-			ISO9660File file10 = new ISO9660File("test/tux.gif", 10);
+			ISO9660File file10 = new ISO9660File("testsuite/tux.gif", 10);
 			root.addFile(file10);
-			ISO9660File file12 = new ISO9660File("test/tux.gif", 12);
+			ISO9660File file12 = new ISO9660File("testsuite/tux.gif", 12);
 			root.addFile(file12);
 		}
 
@@ -156,11 +162,11 @@ public class ISOtest {
 		ElToritoConfig elToritoConfig = null;
 		if (enableElTorito) {
 			// El Torito support
-			elToritoConfig = new ElToritoConfig(
-				new File("tomsrtbt-2.0.103.ElTorito.288.img"),
-				ElToritoConfig.BOOT_MEDIA_TYPE_2_88MEG_DISKETTE,
-				ElToritoConfig.PLATFORM_ID_X86, "isoTest", 4,
-				ElToritoConfig.LOAD_SEGMENT_7C0);
+			elToritoConfig = new ElToritoConfig(new File(
+					"tomsrtbt-2.0.103.ElTorito.288.img"),
+					ElToritoConfig.BOOT_MEDIA_TYPE_2_88MEG_DISKETTE,
+					ElToritoConfig.PLATFORM_ID_X86, "isoTest", 4,
+					ElToritoConfig.LOAD_SEGMENT_7C0);
 		}
 
 		// Create ISO

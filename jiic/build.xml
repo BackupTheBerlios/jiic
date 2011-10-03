@@ -126,7 +126,7 @@
 	  ****************************************************
 	-->
 	
-	<target name="test" depends="taskdef,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths,executable" description="Run the available tests" />	
+	<target name="test" depends="taskdef,java.test,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths,executable" description="Run the available tests" />	
 
 	<!-- Properties for test dependencies -->
 	<property name="kernelversion" value="2.6.20"/>
@@ -151,8 +151,18 @@
 
 	<!-- Test class -->
 	<target name="java.test">
+		<condition property="eltorito.arg" value="" else="--disable-eltorito">
+			<isset property="tomsrtbt.exists" />
+		</condition>
 		<javac srcdir="." includes="ISOtest.java" classpathref="jiic" includeantruntime="false" verbose="true" />
-		<java classname="ISOtest" classpathref="jiic" />
+		<java classname="ISOtest" fork="true">
+			<classpath>
+				<pathelement location="." />
+				<path refid="jiic" />
+			</classpath>
+			<arg value="test/ISOTest.iso" />
+			<arg line="${eltorito.arg}" />
+		</java>
 	</target>
 	
 	<!-- Test creating a bootable iso -->
@@ -168,14 +178,20 @@
 		<echo>boot test skipped</echo>
 	</target>
 
-	<target name="longtest" if="longtest">
-		<jiic:iso destfile="longtest.iso" basedir="test" name="longtest"
+	<target name="longtest">
+		<delete dir="test/longtest" />
+		<mkdir dir="test/longtest/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ" />
+		<echo file="test/longtest/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ/ABCDEFGHIJKLMNOPQRSTUVWXYZ.ABCDEFG" message="Test data" />
+		
+		<jiic:iso destfile="test/longtest.iso" basedir="test/longtest" name="longtest"
 			interchangeLevel="2" allowLongJolietNames="yes"
 		/>
 	</target>
 
-	<target name="minimal" if="minimal">
-		<jiic:iso destfile="minimal.iso" basedir="." name="Minimal"
+	<target name="minimal">
+		<mkdir dir="test/minimal" />
+		<touch file="test/minimal/dummy" />
+		<jiic:iso destfile="test/minimal.iso" basedir="test" name="Minimal"
 			includes="minimal/dummy"
 		/>
 	</target>
@@ -192,10 +208,13 @@
 	</target>
 	
 	<!-- Test an iso with elephants dream on it -->
-	<target name="eldream" if="eldream.exists">
+	<target name="eldream" if="eldream.exists" depends="eldream.skipped">
 		<jiic:iso destfile="test/eldream.iso" basedir="test" name="Elephants Dream"
 			includes="test/eldream/ed_1024.avi"
 		/>
+	</target>
+	<target name="eldream.skipped" unless="eldream.exists">
+		<echo>eldream test skipped</echo>
 	</target>
 
 	<!-- Tests based around the linux kernel -->

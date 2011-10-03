@@ -1,0 +1,2 @@
+JCreateISO (c) Jens Hatlak <hatlak@rbg.informatik.tu-darmstadt.de>
+Tux (c) Larry Ewing <lewing@isc.tamu.edu> and The GIMP
