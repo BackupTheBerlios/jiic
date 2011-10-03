@@ -333,7 +333,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		return file.hashCode();
 	}
 
 	void setParentDirectory(ISO9660Directory parent) {
