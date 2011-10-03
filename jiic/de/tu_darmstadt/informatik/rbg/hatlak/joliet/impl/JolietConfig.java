@@ -61,7 +61,7 @@ public class JolietConfig extends StandardConfig {
 	/**
 	 * Set UCS-2 Level
 	 * 
-	 * @see http://www.nada.kth.se/i18n/ucs/unicode-iso10646-oview.html
+	 * @see <a href="http://www.nada.kth.se/i18n/ucs/unicode-iso10646-oview.html">ISO/IEC 10646 and Unicode</a>
 	 * @param level 1, 2 or 3
 	 * @throws ConfigException Invalid UCS-2 level
 	 */
