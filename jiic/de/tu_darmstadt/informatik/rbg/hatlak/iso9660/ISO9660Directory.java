@@ -20,8 +20,12 @@
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
 
+import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.POSIXFileMode;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public class ISO9660Directory implements ISO9660HierarchyObject {
@@ -34,6 +38,7 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	private boolean sorted;
 	private Object id;
 	ISO9660DirectoryIterator sortedIterator, unsortedIterator;
+	private POSIXFileMode filemode;
 	
 	/**
 	 * Create directory
@@ -136,6 +141,14 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 			sort();
 		}
 		return directories;
+	}
+	
+	public void setFileMode(POSIXFileMode filemode) {
+		this.filemode = filemode;
+	}
+	
+	public POSIXFileMode getFileMode() {
+		return this.filemode;
 	}
 	
 	/**
@@ -247,23 +260,42 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	 * @throws HandlerException
 	 */
 	public ISO9660Directory addPath(String path) throws HandlerException {
+		return addPath(path, null);
+	}
+	
+	/**
+	 * Add path with a filemode to apply to directory entries
+	 * 
+	 * @param path Filesystem-specific path to be added recursively
+	 * @param filemode File mode to apply to directory entries in the rockridge extensions
+	 * @return Topmost added directory
+	 * @throws HandlerException
+	 */
+	public ISO9660Directory addPath(String path, POSIXFileMode filemode) throws HandlerException {
 		ISO9660Directory dir = null;
 		if (path.indexOf(File.separator) == -1) {
 			// Path is a directory - add it if not already listed
-			return checkDirectory(path);
+			return checkDirectory(path, filemode);
 		}
 
 		// Add path recursively
 		int frontSeparatorIndex = path.indexOf(File.separator);
 		String dirName = path.substring(0, frontSeparatorIndex);
-		dir = checkDirectory(dirName);
+		dir = checkDirectory(dirName, filemode);
 		String rest = path.substring(frontSeparatorIndex+1);
-		dir = dir.addPath(rest);
+		dir = dir.addPath(rest, filemode);
 		
 		return dir;
 	}
 	
-	private ISO9660Directory checkDirectory(String name) throws HandlerException {
+	/**
+	 * 
+	 * @param name
+	 * @param filemode Mode to create dir in, if it doesn't exist already
+	 * @return
+	 * @throws HandlerException
+	 */
+	private ISO9660Directory checkDirectory(String name, POSIXFileMode filemode) throws HandlerException {
 		Iterator it = directories.iterator();
 		while (it.hasNext()) {
 			ISO9660Directory dir = (ISO9660Directory) it.next();
@@ -272,7 +304,9 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 			}
 		}
 		// Not listed -> create a new one and add it to the hierarchy
-		return addDirectory(name);
+		ISO9660Directory dir = addDirectory(name);
+		dir.setFileMode(filemode);
+		return dir;
 	}
 	
 	/**
@@ -293,10 +327,11 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	 * 
 	 * @param file File to be added
 	 */
-	public void addFile(ISO9660File file) {
+	public ISO9660File addFile(ISO9660File file) {
 		file.setParentDirectory(this);
 		files.add(file);
 		sorted = false;
+		return file;
 	}
 
 	/**
@@ -306,8 +341,8 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	 * @param version File version
 	 * @throws HandlerException Problems converting to ISO9660File
 	 */
-	public void addFile(File file, int version) throws HandlerException {
-		addFile(new ISO9660File(file, version));
+	public ISO9660File addFile(File file, int version) throws HandlerException {
+		return addFile(new ISO9660File(file, version));
 	}
 
 	/**
@@ -316,8 +351,8 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	 * @param file File to be added
 	 * @throws HandlerException Problems converting to ISO9660File
 	 */
-	public void addFile(File file) throws HandlerException {
-		addFile(new ISO9660File(file));
+	public ISO9660File addFile(File file) throws HandlerException {
+		return addFile(new ISO9660File(file));
 	}
 	
 	/**
@@ -327,8 +362,8 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	 * @param version File version
 	 * @throws HandlerException Problems converting to ISO9660File
 	 */
-	public void addFile(String pathname, int version) throws HandlerException {
-		addFile(new ISO9660File(pathname, version));
+	public ISO9660File addFile(String pathname, int version) throws HandlerException {
+		return addFile(new ISO9660File(pathname, version));
 	}
 
 	/**
@@ -337,8 +372,8 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	 * @param pathname File to be added
 	 * @throws HandlerException Problems converting to ISO9660File
 	 */
-	public void addFile(String pathname) throws HandlerException {
-		addFile(new ISO9660File(pathname));
+	public ISO9660File addFile(String pathname) throws HandlerException {
+		return addFile(new ISO9660File(pathname));
 	}
 
 	/**
@@ -452,6 +487,7 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 		return id;
 	}
 
+	@Override
 	public Object clone() {
 		ISO9660Directory clone = null;
 		try {
@@ -482,7 +518,7 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 		Iterator fit = files.iterator();
 		while (fit.hasNext()) {
 			ISO9660File file = (ISO9660File) fit.next();
-			ISO9660File fileClone = (ISO9660File) file.clone();
+			ISO9660File fileClone = file.clone();
 			fileClone.setParentDirectory(clone);
 			clone.files.add(fileClone);
 		}

@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: jiic
 Bundle-SymbolicName: jiic
 Bundle-Version: 1.2.0.qualifier
-Bundle-ClassPath: lib/sabre.jar,
- lib/iso9660.jar
+Bundle-ClassPath: lib/sabre.jar
 Export-Package: de.tu_darmstadt.informatik.rbg.hatlak.eltorito.impl,
  de.tu_darmstadt.informatik.rbg.hatlak.iso9660,
  de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl,

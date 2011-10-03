@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<antlib>
+	<taskdef name="iso"			classname="de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISOTask"/>
+	<typedef name="isofileset"	classname="de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISOFileSet"/>
+</antlib>

@@ -19,16 +19,47 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
+
+import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.POSIXFileMode;
 
 public class ISOFileSet extends FileSet {
 	private String prefix = "";
-
+	private POSIXFileMode filemode;
+	private POSIXFileMode dirmode;
+	
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
 
 	public String getPrefix() {
 		return prefix;
+	}
+	
+	public void setFilemode(String filemode) {
+		try {
+			this.filemode = new POSIXFileMode(filemode);
+			this.filemode.setFile();
+		} catch (NumberFormatException e) {
+			throw new BuildException("Badly formatted filemode", e);
+		}
+	}
+	
+	public POSIXFileMode getFilemode() {
+		return filemode;
+	}
+	
+	public void setDirmode(String dirmode) {
+		try {
+			this.dirmode = new POSIXFileMode(dirmode);
+			this.dirmode.setDirectory();
+		} catch (NumberFormatException e) {
+			throw new BuildException("Badly formatted dirmode", e);
+		}
+	}
+	
+	public POSIXFileMode getDirmode() {
+		return dirmode;
 	}
 }

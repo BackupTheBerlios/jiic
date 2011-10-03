@@ -44,6 +44,21 @@ public class POSIXFileMode {
 	public static final int PIPE_FIFO = 010000;
 	private int fileMode;
 	
+	public static final POSIXFileMode DIRECTORY_DEFAULT = new POSIXFileMode(040755);
+	public static final POSIXFileMode FILE_DEFAULT = new POSIXFileMode(0100644);
+	
+	public POSIXFileMode(String filemode) {
+		 init();
+		 
+		 fileMode = Integer.parseInt(filemode, 8);			 
+	}
+	
+	public POSIXFileMode(int filemode) {
+		 init();
+		 
+		 this.fileMode = filemode;			 
+	}
+	
 	public POSIXFileMode() {
 		 init();
 	}

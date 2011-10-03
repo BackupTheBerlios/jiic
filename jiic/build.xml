@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jiic" default="build" basedir=".">
+<project name="jiic" default="build" basedir="." xmlns:jiic="de.tu_darmstadt.informatik.rbg.hatlak.iso9660">
 	
 	<!--
 	<iso
@@ -126,7 +126,7 @@
 	  ****************************************************
 	-->
 	
-	<target name="test" depends="taskdef,java.test,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths" description="Run the available tests" />	
+	<target name="test" depends="taskdef,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths,executable" description="Run the available tests" />	
 
 	<!-- Properties for test dependencies -->
 	<property name="kernelversion" value="2.6.20"/>
@@ -144,9 +144,9 @@
 	<available file="test/linux-${kernelversion}" property="linux.exists" type="dir" />
 	
 	<target name="taskdef" description="Load the built task">
-		<taskdef name="iso"
-			classname="de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISOTask" classpathref="jiic">
-		</taskdef>
+		<taskdef uri="de.tu_darmstadt.informatik.rbg.hatlak.iso9660"
+		         resource="de/tu_darmstadt/informatik/rbg/hatlak/iso9660/antlib.xml"
+		         classpathref="jiic" />
 	</target>
 
 	<!-- Test class -->
@@ -157,7 +157,7 @@
 	
 	<!-- Test creating a bootable iso -->
 	<target name="boot" if="tomsrtbt.exists" depends="boot.skipped">
-		<iso destfile="test/boot.iso" basedir="." name="Boot"
+		<jiic:iso destfile="test/boot.iso" basedir="." name="Boot"
 			excludes="**" copyrightFile="Copyright.txt"
 			bootImage="test/${tomsrtbt}"
 			bootImageSectorCount="1" bootImageEmulation="2.88"
@@ -169,13 +169,13 @@
 	</target>
 
 	<target name="longtest" if="longtest">
-		<iso destfile="longtest.iso" basedir="test" name="longtest"
+		<jiic:iso destfile="longtest.iso" basedir="test" name="longtest"
 			interchangeLevel="2" allowLongJolietNames="yes"
 		/>
 	</target>
 
 	<target name="minimal" if="minimal">
-		<iso destfile="minimal.iso" basedir="." name="Minimal"
+		<jiic:iso destfile="minimal.iso" basedir="." name="Minimal"
 			includes="minimal/dummy"
 		/>
 	</target>
@@ -183,17 +183,17 @@
 	<!-- Test a completely empty ISO -->
 	<target name="empty">
 		<mkdir dir="test/empty" />
-		<iso destfile="test/empty.iso" basedir="test/empty" />
+		<jiic:iso destfile="test/empty.iso" basedir="test/empty" />
 	</target>
 	
 	<target name="copyright">
 		<mkdir dir="test/copyright" />
-		<iso destfile="test/copyright.iso" basedir="test/copyright" name="test" copyrightFile="Copyright.txt" />
+		<jiic:iso destfile="test/copyright.iso" basedir="test/copyright" name="test" copyrightFile="Copyright.txt" />
 	</target>
 	
 	<!-- Test an iso with elephants dream on it -->
 	<target name="eldream" if="eldream.exists">
-		<iso destfile="test/eldream.iso" basedir="test" name="Elephants Dream"
+		<jiic:iso destfile="test/eldream.iso" basedir="test" name="Elephants Dream"
 			includes="test/eldream/ed_1024.avi"
 		/>
 	</target>
@@ -205,17 +205,17 @@
 		</untar>
 	</target>
 	<target name="linux" if="linux.exists" depends="linux.skipped">
-		<iso destfile="linux.iso" basedir="linux-${kernelversion}" name="Linux"
+		<jiic:iso destfile="linux.iso" basedir="linux-${kernelversion}" name="Linux"
 			excludes="/linux-${kernelversion}"
 		/>
 	</target>
 	<target name="linux-norr" if="linux.exists" depends="linux.skipped">
-		<iso destfile="linux.iso" basedir="linux-${kernelversion}" name="Linux"
+		<jiic:iso destfile="linux.iso" basedir="linux-${kernelversion}" name="Linux"
 			excludes="/linux-${kernelversion}" enableRockRidge="no"
 		/>
 	</target>
 	<target name="linux-isoonly" if="linux.exists" depends="linux.skipped">
-		<iso destfile="linux.iso" basedir="linux-${kernelversion}" name="Linux"
+		<jiic:iso destfile="linux.iso" basedir="linux-${kernelversion}" name="Linux"
 			excludes="/linux-${kernelversion}" enableRockRidge="no" enableJoliet="no"
 		/>
 	</target>
@@ -228,7 +228,7 @@
 		<delete dir="test/paths" />
 		<mkdir dir="test/paths/iso/InfoCenter_for_Windows/ibm_help/eclipse/plugins/org.eclipse.help.webapp_3.5.0.v20100507/web-archive/help/WEB-INF" />
 		<mkdir dir="test/paths/iso/InfoCenter_for_Windows/ibm_help/eclipse/plugins/org.eclipse.help.webapp_3.5.0.v20100507/web-archive/help/META-INF" />
-		<iso destfile="test/paths.iso" basedir="test/paths/iso" name="Linux" restrictdirdepthto8="false" />
+		<jiic:iso destfile="test/paths.iso" basedir="test/paths/iso" name="Linux" restrictdirdepthto8="false" />
 	</target>
 
 	<!-- Check that executable.iso contains script.sh and it is marked as r-xrw-r-x, and that the dir is rwxr-xrwx -->
@@ -239,9 +239,9 @@
 		
 		<echo file="test/exe/script.sh">#!/bin/bash${line.separator}echo Success</echo>
 		
-		<iso destfile="test/executable.iso" name="Linux">
+		<jiic:iso destfile="test/executable.iso" name="Linux">
 			<isofileset dir="test/exe" filemode="565" dirmode="757" />
-		</iso>
+		</jiic:iso>
 	</target>
 	
 </project>

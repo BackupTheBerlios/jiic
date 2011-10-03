@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660Constants;
+import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.POSIXFileMode;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 /**
@@ -39,6 +40,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	private ISO9660Directory parent;
 	private Object id;
 	private File file;
+	private POSIXFileMode filemode;
 
 	/**
 	 * Create file from File object
@@ -88,6 +90,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 */
 	public ISO9660File(ISO9660File file) throws HandlerException {
 		this(file.file);
+		setFileMode(file.getFileMode());
 	}
 	
 	/**
@@ -240,6 +243,14 @@ public class ISO9660File implements ISO9660HierarchyObject {
 		}
 	}
 
+	public void setFileMode(POSIXFileMode filemode) {
+		this.filemode = filemode;
+	}
+	
+	public POSIXFileMode getFileMode() {
+		return this.filemode;
+	}
+	
 	/**
 	 * Returns whether this file's name is forced to be recorded "8+3"
 	 * 

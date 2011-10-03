@@ -34,6 +34,7 @@ import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.CreateISO;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660Config;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISOImageFileHandler;
 import de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl.JolietConfig;
+import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.POSIXFileMode;
 import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.RockRidgeConfig;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
@@ -48,6 +49,7 @@ public class ISOTask extends MatchingTask {
 		genBootInfoTable, padEnd, allowLongJolietNames;
 	private int interchangeLevel, bootImageSectorCount, bootImageLoadSegment;
 
+	@Override
 	public void init() {
 		baseDir = destFile = bootImage = null;
 		filesets = new Vector();
@@ -72,6 +74,7 @@ public class ISOTask extends MatchingTask {
 		allowLongJolietNames = false;
 	}
 
+	@Override
 	public void execute() throws BuildException {
 		if (baseDir == null && filesets.size()==0) {
 			throw new BuildException("basedir attribute must be set, "
@@ -219,16 +222,20 @@ public class ISOTask extends MatchingTask {
         	FileSet fs = (FileSet) it.next();
         	
         	String prefix = "";
+        	POSIXFileMode filemode = null;
+        	POSIXFileMode dirmode = null;
             if (fs instanceof ISOFileSet) {
             	ISOFileSet ifs = (ISOFileSet) fs;
                 prefix = ifs.getPrefix();
+                filemode = ifs.getFilemode();
+                dirmode = ifs.getDirmode();
             }
 
-        	createHierarchy(root, fs, prefix);
+        	createHierarchy(root, fs, prefix, filemode, dirmode);
         }
 	}
 
-	private void createHierarchy(ISO9660RootDirectory root, FileSet fs, String prefix) throws HandlerException {
+	private void createHierarchy(ISO9660RootDirectory root, FileSet fs, String prefix, POSIXFileMode filemode, POSIXFileMode dirmode) throws HandlerException {
 		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 
 		// Add directories
@@ -236,7 +243,7 @@ public class ISOTask extends MatchingTask {
         for (int i = 0; i < dirs.length; i++) {
         	if (!dirs[i].equals("")) {
         		String path = checkPrefix(dirs[i], prefix);
-        		root.addPath(path);
+        		root.addPath(path, dirmode);
         	}
         }
 
@@ -247,9 +254,10 @@ public class ISOTask extends MatchingTask {
         	String path = checkPrefix(files[i], prefix);
         	if (path.indexOf(File.separator) >= 0) {
         		path = path.substring(0, path.lastIndexOf(File.separator));
-            	dir = root.addPath(path);
+            	dir = root.addPath(path, dirmode);
         	}
-            dir.addFile(new File(ds.getBasedir(), files[i]));
+            ISO9660File file = dir.addFile(new File(ds.getBasedir(), files[i]));
+            file.setFileMode(filemode);
         }		
 	}
 	
