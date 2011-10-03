@@ -106,7 +106,7 @@
 
 	<target name="compile">
 		<mkdir dir="${bin}" />
-		<javac srcdir="${src}" destdir="${bin}" source="1.5" target="1.5" includeantruntime="true" classpathref="sabre" /> 
+		<javac srcdir="${src}" includes="de/**/*.java" destdir="${bin}" source="1.5" target="1.5" includeantruntime="true" classpathref="sabre" /> 
 	</target>
 	
 	<target name="jar">

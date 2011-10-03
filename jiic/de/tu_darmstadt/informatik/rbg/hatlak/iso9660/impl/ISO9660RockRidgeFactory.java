@@ -124,11 +124,10 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		}
 
 		// PX: POSIX File Attributes
-		POSIXFileMode fileMode = new POSIXFileMode();
-		fileMode.setDefault(true);
-		int fileModes = fileMode.getFileMode();
+		POSIXFileMode fileMode = dir.getFileMode();
+		if (fileMode == null) fileMode = POSIXFileMode.DIRECTORY_DEFAULT;
 		int fileLinks = 2 + dir.getDirectories().size();
-		rripFactory.doPXEntry(fileModes, fileLinks, 0, 0, 1);
+		rripFactory.doPXEntry(fileMode.getFileMode(), fileLinks, 0, 0, 1);
 
 		// CL: Child link (location of the actual directory record)
 		childLocationFixups.put(dir, rripFactory.doCLEntry());
@@ -154,10 +153,9 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		}
 
 		// PX: POSIX File Attributes
-		POSIXFileMode fileMode = new POSIXFileMode();
-		fileMode.setDefault(false);
-		int fileModes = fileMode.getFileMode();
-		rripFactory.doPXEntry(fileModes, 1, 0, 0, 1);
+		POSIXFileMode fileMode = file.getFileMode();
+		if (fileMode == null) fileMode = POSIXFileMode.FILE_DEFAULT;
+		rripFactory.doPXEntry(fileMode.getFileMode(), 1, 0, 0, 1);
 		
 		// TF: Timestamp
 		ISO9660ShortDateDataReference date = new ISO9660ShortDateDataReference(file.lastModified());
@@ -192,11 +190,10 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		}
 
 		// PX: POSIX File Attributes
-		POSIXFileMode fileMode = new POSIXFileMode();
-		fileMode.setDefault(true);
-		int fileModes = fileMode.getFileMode();
+		POSIXFileMode fileMode = dir.getFileMode();
+		if (fileMode == null) fileMode = POSIXFileMode.DIRECTORY_DEFAULT;
 		int fileLinks = 2 + dir.getDirectories().size();
-		rripFactory.doPXEntry(fileModes, fileLinks, 0, 0, 1);
+		rripFactory.doPXEntry(fileMode.getFileMode(), fileLinks, 0, 0, 1);
 		
 		// TF: Timestamp
 		ISO9660ShortDateDataReference date = new ISO9660ShortDateDataReference(dir.lastModified());
@@ -228,11 +225,10 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		}
 
 		// PX: POSIX File Attributes
-		POSIXFileMode fileMode = new POSIXFileMode();
-		fileMode.setDefault(true);
-		int fileModes = fileMode.getFileMode();
+		POSIXFileMode fileMode = dir.getFileMode();
+		if (fileMode == null) fileMode = POSIXFileMode.DIRECTORY_DEFAULT;
 		int fileLinks = 2 + dir.getDirectories().size();
-		rripFactory.doPXEntry(fileModes, fileLinks, 0, 0, 1);
+		rripFactory.doPXEntry(fileMode.getFileMode(), fileLinks, 0, 0, 1);
 		
 		// TF: Timestamp
 		ISO9660ShortDateDataReference date = new ISO9660ShortDateDataReference(dir.lastModified());
@@ -274,11 +270,10 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		}
 		
 		// PX: POSIX File Attributes
-		POSIXFileMode fileMode = new POSIXFileMode();
-		fileMode.setDefault(true);
-		int fileModes = fileMode.getFileMode();
+		POSIXFileMode fileMode = parentDir.getFileMode();
+		if (fileMode == null) fileMode = POSIXFileMode.DIRECTORY_DEFAULT;
 		int fileLinks = 2 + parentDir.getDirectories().size();
-		rripFactory.doPXEntry(fileModes, fileLinks, 0, 0, 1);
+		rripFactory.doPXEntry(fileMode.getFileMode(), fileLinks, 0, 0, 1);
 		
 		// TF: Timestamp
 		ISO9660ShortDateDataReference date = new ISO9660ShortDateDataReference(parentDir.lastModified());

@@ -40,7 +40,7 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public class ISOTask extends MatchingTask {
 	private File baseDir, destFile, bootImage;
-	private Vector filesets;
+	private Vector<FileSet> filesets;
 	private String name, system, publisher, dataPreparer, copyrightFile, bootImageID,
 		bootImageEmulation, bootImagePlatformID, movedDirectoriesStoreName;
 	private boolean allowASCII, restrictDirDepthTo8, forceDotDelimiter,
@@ -52,7 +52,7 @@ public class ISOTask extends MatchingTask {
 	@Override
 	public void init() {
 		baseDir = destFile = bootImage = null;
-		filesets = new Vector();
+		filesets = new Vector<FileSet>();
 		name = system = publisher = dataPreparer = bootImageID = "";
 		copyrightFile = null;
 		movedDirectoriesStoreName = "rr_moved";
@@ -217,9 +217,9 @@ public class ISOTask extends MatchingTask {
             filesets.addElement(fs);
         }
 
-		Iterator it = filesets.iterator();
+		Iterator<FileSet> it = filesets.iterator();
         while (it.hasNext()) {
-        	FileSet fs = (FileSet) it.next();
+        	FileSet fs = it.next();
         	
         	String prefix = "";
         	POSIXFileMode filemode = null;
