@@ -59,45 +59,49 @@ public class ISO9660RootDirectory extends ISO9660Directory {
 		return movedDirectoriesStore;
 	}
 	
+	@Override
 	public int deepLevelCount() {
 		int count = getLevel();
-		Iterator it = getDirectories().iterator();
+		Iterator<ISO9660Directory> it = getDirectories().iterator();
 		while (it.hasNext()) {
-			ISO9660Directory dir = (ISO9660Directory) it.next();
+			ISO9660Directory dir = it.next();
 			count = Math.max(count, dir.deepLevelCount());
 		}
 		return count;
 	}
 
+	@Override
 	public int deepFileCount() {
 		int count = getFiles().size();
-		Iterator it = getDirectories().iterator();
+		Iterator<ISO9660Directory> it = getDirectories().iterator();
 		while (it.hasNext()) {
-			ISO9660Directory dir = (ISO9660Directory) it.next();
+			ISO9660Directory dir = it.next();
 			count += dir.deepFileCount();
 		}
 		return count;
 	}
 
+	@Override
 	public int deepDirCount() {
 		int count = getDirectories().size();
-		Iterator it = getDirectories().iterator();
+		Iterator<ISO9660Directory> it = getDirectories().iterator();
 		while (it.hasNext()) {
-			ISO9660Directory dir = (ISO9660Directory) it.next();
+			ISO9660Directory dir = it.next();
 			count += dir.deepDirCount();
 		}
 		return count;
 	}
 	
+	@Override
 	public Object clone() {
 		ISO9660RootDirectory clone = (ISO9660RootDirectory) super.clone();
 		clone.setParentDirectory(clone);
 		clone.setRoot(clone);
 		
 		// Update Root for subdirectories
-		Iterator it = clone.unsortedIterator();
+		Iterator<ISO9660Directory> it = clone.unsortedIterator();
 		while (it.hasNext()) {
-			ISO9660Directory dir = (ISO9660Directory) it.next();
+			ISO9660Directory dir = it.next();
 			dir.setRoot(clone);
 		}
 		

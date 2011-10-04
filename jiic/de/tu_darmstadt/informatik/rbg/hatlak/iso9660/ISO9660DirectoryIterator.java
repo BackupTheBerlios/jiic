@@ -19,7 +19,10 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * ISO 9660 Directory Iterator<br>
@@ -27,12 +30,12 @@ import java.util.*;
  * NOT including the start directory itself.
  * By default, directories are processed in ISO 9660 sorted order.
  */
-public class ISO9660DirectoryIterator implements Iterator {
-	private Vector dirCollection;
-	private Iterator dirCollectionIterator;
+public class ISO9660DirectoryIterator implements Iterator<ISO9660Directory> {
+	private List<ISO9660Directory> dirCollection;
+	private Iterator<ISO9660Directory> dirCollectionIterator;
 
 	public ISO9660DirectoryIterator(ISO9660Directory start, boolean sort) {
-		this.dirCollection = new Vector();
+		this.dirCollection = new Vector<ISO9660Directory>();
 		if (sort) {
 			setupSorted(start);
 		} else {
@@ -47,13 +50,13 @@ public class ISO9660DirectoryIterator implements Iterator {
 	
 	private void setupSorted(ISO9660Directory start) {
 		// Sort according to ISO 9660 needs
-		Vector dirs = start.getDirectories();
+		List<ISO9660Directory> dirs = start.getDirectories();
 		if (dirs.size() > 0) {
-			LinkedList queue = new LinkedList();
+			LinkedList<ISO9660Directory> queue = new LinkedList<ISO9660Directory>();
 			dirCollection.addAll(dirs);
 			queue.addAll(dirs);
 			while (!queue.isEmpty()) {
-				ISO9660Directory dir = (ISO9660Directory) queue.removeFirst();
+				ISO9660Directory dir = queue.removeFirst();
 				if (dir==dir.getRoot().getMovedDirectoriesStore()) {
 					dirs = dir.getDirectories();
 				} else {
@@ -65,11 +68,11 @@ public class ISO9660DirectoryIterator implements Iterator {
 		}
 	}
 	
-	private Vector checkMoved(Vector dirs) {
-		Vector copy = new Vector(dirs);
-		Iterator it = dirs.iterator();
+	private List<ISO9660Directory> checkMoved(List<ISO9660Directory> dirs) {
+		List<ISO9660Directory> copy = new Vector<ISO9660Directory>(dirs);
+		Iterator<ISO9660Directory> it = dirs.iterator();
 		while (it.hasNext()) {
-			ISO9660Directory dir = (ISO9660Directory) it.next();
+			ISO9660Directory dir = it.next();
 			if (dir.isMoved()) {
 				copy.remove(dir);
 			}
@@ -79,9 +82,9 @@ public class ISO9660DirectoryIterator implements Iterator {
 
 	private void setupUnsorted(ISO9660Directory start) {
 		// No sorting needed, add recursively
-		Iterator it = start.getDirectories().iterator();
+		Iterator<ISO9660Directory> it = start.getDirectories().iterator();
 		while (it.hasNext()) {
-			setupUnsorted((ISO9660Directory) it.next());
+			setupUnsorted(it.next());
 		}
 		dirCollection.add(start);
 	}
@@ -90,7 +93,7 @@ public class ISO9660DirectoryIterator implements Iterator {
 		return dirCollectionIterator.hasNext();
 	}
 
-	public Object next() {
+	public ISO9660Directory next() {
 		return dirCollectionIterator.next();
 	}
 

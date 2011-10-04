@@ -19,12 +19,27 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
-import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660RootDirectory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.LayoutHelper;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.NamingConventions;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.StandardConfig;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.BothWordDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.EmptyByteArrayDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.LSBFWordDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Fixup;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.WordDataReference;
 
 public class ISO9660Factory {
 	StreamHandler streamHandler;
@@ -176,7 +191,7 @@ public class ISO9660Factory {
 		volumeFixups.remove("rootDirLengthFixup");		
 	}
 	
-	void doDir(ISO9660Directory dir, HashMap parentMapper) throws HandlerException {
+	void doDir(ISO9660Directory dir, Map<ISO9660Directory, ParentInfo> parentMapper) throws HandlerException {
 		streamHandler.startElement(new LogicalSectorElement("DIR"));
 		long position = streamHandler.mark();
 		int location = helper.getCurrentLocation();
@@ -236,7 +251,7 @@ public class ISO9660Factory {
 		dotLengthFixup.close();
 
 		// Retrieve Parent Location and Length from parentMapper
-		ParentInfo dotdotInfo = (ParentInfo) parentMapper.get(dir.getParentDirectory());
+		ParentInfo dotdotInfo = parentMapper.get(dir.getParentDirectory());
 		
 		// Write and close "dotdot" Fixups
 		dotdotLocationFixup.data(new BothWordDataReference(dotdotInfo.location));
