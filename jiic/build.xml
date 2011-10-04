@@ -139,9 +139,9 @@
 	</path>
 
 	<!-- Check which tests we can run -->
-	<available file="test/${tomsrtbt}" property="tomsrtbt.exists" type="file" />
-	<available file="test/eldream/ed_1024.avi" property="eldream.exists" type="file"/>
-	<available file="test/linux-${kernelversion}" property="linux.exists" type="dir" />
+	<available file="${tomsrtbt}" property="tomsrtbt.exists" type="file" />
+	<available file="eldream/ed_1024.avi" property="eldream.exists" type="file"/>
+	<available file="linux-${kernelversion}" property="linux.exists" type="dir" />
 	
 	<target name="taskdef" description="Load the built task">
 		<taskdef uri="de.tu_darmstadt.informatik.rbg.hatlak.iso9660"
@@ -169,7 +169,7 @@
 	<target name="boot" if="tomsrtbt.exists" depends="boot.skipped">
 		<jiic:iso destfile="test/boot.iso" basedir="." name="Boot"
 			excludes="**" copyrightFile="Copyright.txt"
-			bootImage="test/${tomsrtbt}"
+			bootImage="${tomsrtbt}"
 			bootImageSectorCount="1" bootImageEmulation="2.88"
 			bootImagePlatformID="X86"
 		/>
@@ -209,8 +209,8 @@
 	
 	<!-- Test an iso with elephants dream on it -->
 	<target name="eldream" if="eldream.exists" depends="eldream.skipped">
-		<jiic:iso destfile="test/eldream.iso" basedir="test" name="Elephants Dream"
-			includes="test/eldream/ed_1024.avi"
+		<jiic:iso destfile="test/eldream.iso" basedir="." name="Elephants Dream"
+			includes="eldream/ed_1024.avi"
 		/>
 	</target>
 	<target name="eldream.skipped" unless="eldream.exists">
@@ -247,7 +247,7 @@
 		<delete dir="test/paths" />
 		<mkdir dir="test/paths/iso/InfoCenter_for_Windows/ibm_help/eclipse/plugins/org.eclipse.help.webapp_3.5.0.v20100507/web-archive/help/WEB-INF" />
 		<mkdir dir="test/paths/iso/InfoCenter_for_Windows/ibm_help/eclipse/plugins/org.eclipse.help.webapp_3.5.0.v20100507/web-archive/help/META-INF" />
-		<jiic:iso destfile="test/paths.iso" basedir="test/paths/iso" name="Linux" restrictdirdepthto8="false" />
+		<jiic:iso destfile="test/paths.iso" basedir="test/paths/iso" name="Linux" />
 	</target>
 
 	<!-- Check that executable.iso contains script.sh and it is marked as r-xrw-r-x, and that the dir is rwxr-xrwx -->
