@@ -19,10 +19,12 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Vector;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.FilenameDataReference;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
@@ -46,7 +48,7 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 	private LinkedList<UnfinishedNMEntry> unfinishedNMEntries;
 	private RockRidgeLayoutHelper helper;
 	private ISO9660RootDirectory rripRoot;
-	private Map<ISO9660Directory, ISO9660Directory> originalParentMapper;
+	private Map<ISO9660Directory, Collection<ISO9660Directory>> originalParentMapper;
 	private Map<ISO9660Directory, Fixup> parentLocationFixups;
 	private Map<ISO9660Directory, Integer> parentLocations;
 	private Map<ISO9660Directory, Fixup> childLocationFixups;
@@ -61,7 +63,7 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		rripRoot = (ISO9660RootDirectory) root.clone();
 		this.helper = new RockRidgeLayoutHelper(streamHandler, isoRoot, rripRoot);
 		
-		originalParentMapper = new HashMap<ISO9660Directory, ISO9660Directory>();
+		originalParentMapper = new HashMap<ISO9660Directory, Collection<ISO9660Directory>>();
 	}
 
 	@Override
@@ -106,7 +108,11 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		
 		if (dir.getRoot()==root) {
 			// Save only mappings from ISO 9660 hierarchy
-			originalParentMapper.put(originalParent, dir);
+			if (! originalParentMapper.containsKey(originalParent)) {
+				originalParentMapper.put(originalParent, new Vector<ISO9660Directory>());
+			}
+			Collection<ISO9660Directory> children = originalParentMapper.get(originalParent);
+			children.add(dir);
 		}
 		
 		return originalParent;
@@ -126,8 +132,11 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		Integer location = new Integer(helper.getCurrentLocation());
 		
 		if (originalParentMapper.containsKey(dir)) {
-			// Remember directory location for PL Location Fixup
-			parentLocations.put(originalParentMapper.get(dir), location);
+			// Remember directory locations for PL Location Fixup
+			Collection<ISO9660Directory> children = originalParentMapper.get(dir);
+			for (ISO9660Directory child : children) {
+				parentLocations.put(child, location);
+			}
 		} else
 		if (dir.isMoved()) {
 			// Remember directory location for CL Location Fixup
