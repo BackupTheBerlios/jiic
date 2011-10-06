@@ -126,7 +126,7 @@
 	  ****************************************************
 	-->
 	
-	<target name="test" depends="taskdef,java.test,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths,executable" description="Run the available tests" />	
+	<target name="test" depends="taskdef,java.test,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths,conflict,executable" description="Run the available tests" />	
 
 	<!-- Properties for test dependencies -->
 	<property name="kernelversion" value="2.6.20"/>
@@ -242,12 +242,21 @@
 		<echo>linux test skipped</echo>
 	</target>
 
-	<!-- Test an ISO with some torublesome paths -->
+	<!-- Test an ISO with some troublesome paths -->
 	<target name="paths">
 		<delete dir="test/paths" />
 		<mkdir dir="test/paths/iso/InfoCenter_for_Windows/ibm_help/eclipse/plugins/org.eclipse.help.webapp_3.5.0.v20100507/web-archive/help/WEB-INF" />
 		<mkdir dir="test/paths/iso/InfoCenter_for_Windows/ibm_help/eclipse/plugins/org.eclipse.help.webapp_3.5.0.v20100507/web-archive/help/META-INF" />
 		<jiic:iso destfile="test/paths.iso" basedir="test/paths/iso" name="Linux" />
+	</target>
+	
+	<!-- Test an ISO where we move a dir which matches one in . by name -->
+	<target name="conflict">
+		<delete dir="test/conflict" />
+		<mkdir dir="test/conflict/1/2/3/4/5/6/7/CONFLICT" />
+		<mkdir dir="CONFLICT" />
+		<jiic:iso destfile="test/conflict.iso" basedir="test/conflict" name="Linux" />
+		<rmdir dir="CONFLICT" />
 	</target>
 
 	<!-- Check that executable.iso contains script.sh and it is marked as r-xrw-r-x, and that the dir is rwxr-xrwx -->
