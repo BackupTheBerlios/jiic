@@ -256,7 +256,7 @@
 		<mkdir dir="test/conflict/1/2/3/4/5/6/7/CONFLICT" />
 		<mkdir dir="CONFLICT" />
 		<jiic:iso destfile="test/conflict.iso" basedir="test/conflict" name="Linux" />
-		<rmdir dir="CONFLICT" />
+		<delete dir="CONFLICT" />
 	</target>
 
 	<!-- Check that executable.iso contains script.sh and it is marked as r-xrw-r-x, and that the dir is rwxr-xrwx -->

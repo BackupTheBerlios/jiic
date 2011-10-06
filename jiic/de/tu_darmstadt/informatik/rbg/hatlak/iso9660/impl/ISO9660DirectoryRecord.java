@@ -19,14 +19,20 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660MovedDirectory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.LayoutHelper;
-import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.BothShortDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.BothWordDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Fixup;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteDataReference;
 
 public class ISO9660DirectoryRecord {
 	private StreamHandler streamHandler;
@@ -44,13 +50,22 @@ public class ISO9660DirectoryRecord {
 	}
 
 	/**
+	 * Moved Directory
+	 */
+	public ISO9660DirectoryRecord(StreamHandler streamHandler, ISO9660MovedDirectory moved, LayoutHelper helper) throws HandlerException {
+		init(streamHandler, helper);		
+		this.filenameDataReference = helper.getFilenameDataReference(moved);
+		this.isDirectory = false;
+	}
+	
+	/**
 	 * Directory
 	 */
 	public ISO9660DirectoryRecord(StreamHandler streamHandler, ISO9660Directory dir, LayoutHelper helper) throws HandlerException {
 		init(streamHandler, helper);		
 		this.filenameDataReference = helper.getFilenameDataReference(dir);
 	}
-
+	
 	/**
 	 * Special Directory
 	 */

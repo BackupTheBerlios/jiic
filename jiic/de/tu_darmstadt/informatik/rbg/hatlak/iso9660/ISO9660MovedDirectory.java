@@ -30,77 +30,29 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
-public class ISO9660File implements ISO9660HierarchyObject {
+public class ISO9660MovedDirectory implements ISO9660HierarchyObject {
 	public static final Pattern FILEPATTERN = Pattern.compile("^([^.]+)\\.(.+)$");
 	private boolean enforceDotDelimiter = false;
 	private static final long serialVersionUID = 1L;
 	private String filename, extension;
 	private int version;
-	private boolean enforce8plus3, isMovedDirectory;
+	private boolean enforce8plus3;
 	private ISO9660Directory parent;
 	private Object id;
-	private File file;
 	private POSIXFileMode filemode;
 
 	/**
 	 * Create file from File object
 	 * 
-	 * @param file File
-	 * @param version File version
-	 * @throws HandlerException Invalid File version or file is a directory
-	 */
-	public ISO9660File(File file, int version) throws HandlerException {
-		this.file = file;
-		setName(file.getName());
-		setVersion(version);
-		id = new Object();
-		enforce8plus3 = false;
-		isMovedDirectory = false;
-		
-		if (isDirectory()) {
-			throw new HandlerException("Cannot wrap directory in " + getClass() + ": " + file.getAbsolutePath());
-		}		
-	}
-
-	/**
-	 * Create file from File object
-	 * 
 	 * @param pathname File
 	 * @param version File version
 	 * @throws HandlerException Invalid File version or file is a directory
 	 */
-	public ISO9660File(String pathname, int version) throws HandlerException {
-		this.file = new File(pathname);
-		setName(this.file.getName());
+	public ISO9660MovedDirectory(String pathname, int version) throws HandlerException {
+		setName(pathname);
 		setVersion(version);
 		id = new Object();
 		enforce8plus3 = false;
-		isMovedDirectory = false;
-		
-		if (isDirectory()) {
-			throw new HandlerException("Cannot wrap directory in " + getClass() + ": " + file.getAbsolutePath());
-		}
-	}
-
-	/**
-	 * Create File
-	 * 
-	 * @param file File
-	 * @throws HandlerException File is a directory
-	 */
-	public ISO9660File(ISO9660File file) throws HandlerException {
-		this(file.file);
-		setFileMode(file.getFileMode());
-	}
-	
-	/**
-	 * Create File
-	 * 
-	 * @param file File
-	 * @throws HandlerException File is a directory
-	 */
-	public ISO9660File(File file) throws HandlerException {
-		this(file, 1);
 	}
 
 	/**
@@ -109,7 +61,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 * @param pathname File
 	 * @throws HandlerException File is a directory
 	 */
-	public ISO9660File(String pathname) throws HandlerException {
+	public ISO9660MovedDirectory(String pathname) throws HandlerException {
 		this(pathname, 1);
 	}
 
@@ -138,33 +90,9 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	}
 	
 	public String getName() {
-		if (isMovedDirectory()) {
-			return filename;
-		} // else
-		
-		if (!extension.equals("") || enforceDotDelimiter) {
-			return filename + "." + extension;
-		} // else
-
 		return filename;
 	}	
 	
-	/**
-	 * Declare this file to be a moved directory "totem pole" 
-	 */
-	public void setIsMovedDirectory() {
-		isMovedDirectory = true;
-	}
-
-	/**
-	 * Returns whether this represents a moved directory "totem pole"
-	 * 
-	 * @return Whether this is a moved directory
-	 */
-	public boolean isMovedDirectory() {
-		return isMovedDirectory;
-	}
-
 	/**
 	 * Set the name of the file (without dot)
 	 * 
@@ -210,11 +138,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 * @return Full ISO 9660 file name
 	 */
 	public String getFullName() {
-		if (isMovedDirectory()) {
-			return filename;
-		} // else
-
-		return getName() + ";" + getVersion();
+		return filename;
 	}
 
 	/**
@@ -333,7 +257,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 
 	@Override
 	public int hashCode() {
-		return file.hashCode();
+		return super.hashCode();
 	}
 
 	void setParentDirectory(ISO9660Directory parent) {
@@ -373,39 +297,19 @@ public class ISO9660File implements ISO9660HierarchyObject {
 		return getParentDirectory().getRoot();
 	}
 	
-	public boolean isDirectory() {
-		return file.isDirectory();
-	}
-	
-	public long length() {
-		return file.length();
-	}
-	
-	public long lastModified() {
-		return file.lastModified();
-	}
-	
-	public File getAbsoluteFile() {
-		return file.getAbsoluteFile();
-	}
-
-	public String getAbsolutePath() {
-		return file.getAbsolutePath();
-	}
-	
-	public File getFile() {
-		return file;
-	}
-	
 	@Override
-	public ISO9660File clone() {
-		ISO9660File clone = null;
+	public ISO9660MovedDirectory clone() {
+		ISO9660MovedDirectory clone = null;
 		try {
-			clone = (ISO9660File) super.clone();
+			clone = (ISO9660MovedDirectory) super.clone();
 			clone.id = id;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
 		return clone;
+	}
+
+	public boolean isDirectory() {
+		return true;
 	}
 }

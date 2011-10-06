@@ -19,9 +19,11 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public abstract class FilenameDataReference implements DataReference {
 	private String name;
@@ -34,6 +36,10 @@ public abstract class FilenameDataReference implements DataReference {
 		setName(file.getFullName());
 	}
 
+	public FilenameDataReference(ISO9660MovedDirectory moved) throws HandlerException {
+		setName(moved.getFullName());
+	}
+	
 	public FilenameDataReference(String name) {
 		setName(name);
 	}

@@ -19,12 +19,15 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.FilenameDataReference;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660MovedDirectory;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public class ISO9660FilenameDataReference extends FilenameDataReference {
 	public ISO9660FilenameDataReference(ISO9660Directory dir) throws HandlerException {
@@ -34,11 +37,17 @@ public class ISO9660FilenameDataReference extends FilenameDataReference {
 	public ISO9660FilenameDataReference(ISO9660File file) throws HandlerException {
 		super(file);
 	}
+
+	public ISO9660FilenameDataReference(ISO9660MovedDirectory moved) throws HandlerException {
+		super(moved);
+	}
 	
+	@Override
 	public long getLength() {
 		return getName().length();
 	}
 
+	@Override
 	public InputStream createInputStream() throws IOException {
 		return new ByteArrayInputStream(getName().getBytes("ISO-8859-1"));
 	}

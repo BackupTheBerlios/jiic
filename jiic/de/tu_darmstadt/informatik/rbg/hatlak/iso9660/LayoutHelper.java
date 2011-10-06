@@ -20,7 +20,8 @@
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660Constants;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
 
 public abstract class LayoutHelper {
 	private StreamHandler streamHandler;
@@ -54,6 +55,8 @@ public abstract class LayoutHelper {
 	public abstract FilenameDataReference getFilenameDataReference(ISO9660Directory dir) throws HandlerException;
 
 	public abstract FilenameDataReference getFilenameDataReference(ISO9660File file) throws HandlerException;
+	
+	public abstract FilenameDataReference getFilenameDataReference(ISO9660MovedDirectory moved) throws HandlerException;
 
 	public abstract byte[] pad(String string, int targetByteLength) throws HandlerException;
 }

@@ -19,10 +19,15 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.FilenameDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660MovedDirectory;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public class JolietFilenameDataReference extends FilenameDataReference {
 	public JolietFilenameDataReference(ISO9660Directory dir) throws HandlerException {
@@ -33,10 +38,16 @@ public class JolietFilenameDataReference extends FilenameDataReference {
 		super(file);
 	}
 
+	public JolietFilenameDataReference(ISO9660MovedDirectory moved) throws HandlerException {
+		super(moved);
+	}
+	
+	@Override
 	public long getLength() {
 		return getName().length() * 2;
 	}
 
+	@Override
 	public InputStream createInputStream() throws IOException {
 		return new ByteArrayInputStream(getName().getBytes("UTF-16BE")); // UCS-2
 	}

@@ -19,11 +19,17 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl;
 
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.FilenameDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660MovedDirectory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660RootDirectory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.LayoutHelper;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
 
 public class RockRidgeLayoutHelper extends LayoutHelper {
 	private ISO9660RootDirectory rripRoot;
@@ -72,14 +78,21 @@ public class RockRidgeLayoutHelper extends LayoutHelper {
 		}
 	}
 
+	@Override
 	public FilenameDataReference getFilenameDataReference(ISO9660Directory dir) throws HandlerException {
 		return new RockRidgeFilenameDataReference(matchDirectory(dir));
 	}
 
+	@Override
 	public FilenameDataReference getFilenameDataReference(ISO9660File file) throws HandlerException {
 		return new RockRidgeFilenameDataReference(matchFile(file));
 	}
 
+	@Override
+	public FilenameDataReference getFilenameDataReference(ISO9660MovedDirectory moved) throws HandlerException {
+		return new RockRidgeFilenameDataReference(matchFile(moved));
+	}
+	
 	public FilenameDataReference getFilenameDataReference(String name) throws HandlerException {
 		return new RockRidgeFilenameDataReference(name);
 	}
@@ -109,7 +122,17 @@ public class RockRidgeLayoutHelper extends LayoutHelper {
 		
 		throw new RuntimeException("No matching file found for " + file.getISOPath());
 	}
+	
+	public ISO9660File matchFile(ISO9660MovedDirectory moved) {		
+		ISO9660File rripFile = (ISO9660File) fileMapper.get(moved.getID());
+		if (rripFile!=null) {
+			return rripFile;
+		}
+		
+		throw new RuntimeException("No matching file found for " + moved.getISOPath());
+	}
 
+	@Override
 	public byte[] pad(String string, int targetByteLength)
 			throws HandlerException {
 		// Unused

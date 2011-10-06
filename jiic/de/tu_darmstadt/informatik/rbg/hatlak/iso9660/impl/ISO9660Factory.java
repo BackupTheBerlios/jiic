@@ -22,11 +22,14 @@ package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660HierarchyObject;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660MovedDirectory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660RootDirectory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.LayoutHelper;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.NamingConventions;
@@ -160,7 +163,7 @@ public class ISO9660Factory {
 	}
 	
 	public void doDRA() throws HandlerException {
-		HashMap parentMapper = new HashMap();
+		Map<ISO9660Directory, ParentInfo> parentMapper = new HashMap<ISO9660Directory, ParentInfo>();
 		
 		// Root Directory
 		doDir(root, parentMapper);
@@ -175,8 +178,8 @@ public class ISO9660Factory {
 		}
 	}
 	
-	private void doRootDirFixups(HashMap parentMapper) throws HandlerException {
-		ParentInfo parentInfo = (ParentInfo) parentMapper.get(root);
+	private void doRootDirFixups(Map<ISO9660Directory, ParentInfo> parentMapper) throws HandlerException {
+		ParentInfo parentInfo = parentMapper.get(root);
 		
 		// Write and close Root Directory Location Fixup
 		Fixup rootDirLocationFixup = (Fixup) volumeFixups.get("rootDirLocationFixup");
@@ -207,15 +210,15 @@ public class ISO9660Factory {
 		Fixup dotdotLengthFixup = (Fixup) dotdotMemory.get("drDataLengthFixup");
 
 		// Prepare files and directories to be processed in sorted order
-		Vector contents = new Vector();
+		List<ISO9660HierarchyObject> contents = new Vector<ISO9660HierarchyObject>();
 		contents.addAll(dir.getDirectories());
 		contents.addAll(dir.getFiles());
 		Collections.sort(contents);
 			
-		Iterator it = contents.iterator();
+		Iterator<ISO9660HierarchyObject> it = contents.iterator();
 		while (it.hasNext()) {
 			doBlockCheck(position);
-			Object object = it.next();
+			ISO9660HierarchyObject object = it.next();
 			if (object instanceof ISO9660Directory) {
 				ISO9660Directory subdir = (ISO9660Directory) object;
 				if (subdir.isMoved() && dir!=root.getMovedDirectoriesStore()) {
@@ -307,9 +310,8 @@ public class ISO9660Factory {
 	}
 
 	HashMap doFakeDR(ISO9660Directory dir) throws HandlerException {
-		ISO9660File file = new ISO9660File(dir.getName());
-		file.setIsMovedDirectory();
-		ISO9660DirectoryRecord dr = new ISO9660DirectoryRecord(streamHandler, file, helper);
+		ISO9660MovedDirectory moved = new ISO9660MovedDirectory(dir.getName());
+		ISO9660DirectoryRecord dr = new ISO9660DirectoryRecord(streamHandler, moved, helper);
 		HashMap memory = dr.doDR();
 		
 		// Remember Location Fixup
