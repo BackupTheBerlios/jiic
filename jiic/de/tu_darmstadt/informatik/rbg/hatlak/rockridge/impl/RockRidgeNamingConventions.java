@@ -21,6 +21,7 @@ package de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
@@ -29,6 +30,7 @@ import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.NamingConventions;
 public class RockRidgeNamingConventions extends NamingConventions {
 	public static boolean HIDE_MOVED_DIRECTORIES_STORE = true;
 	public static boolean FORCE_PORTABLE_FILENAME_CHARACTER_SET = true;
+	private static final Pattern PATTERN = Pattern.compile("[^-A-Za-z0-9._]");
 	// Filename lengths are not restricted by Rock Ridge,
 	// these are just safe defaults
 	public static int MAX_DIRECTORY_LENGTH = 255;
@@ -85,7 +87,7 @@ public class RockRidgeNamingConventions extends NamingConventions {
 
 	private String normalize(String name) {
 		if (FORCE_PORTABLE_FILENAME_CHARACTER_SET) {
-			return name.replaceAll("[^-A-Za-z0-9._]", "_");
+			return PATTERN.matcher(name).replaceAll("_");
 		}
 		return name;
 	}
