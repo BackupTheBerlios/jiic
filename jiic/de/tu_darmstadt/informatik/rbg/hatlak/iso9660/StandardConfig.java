@@ -51,10 +51,10 @@ public abstract class StandardConfig {
 	 * Possibly including Publisher, Data Preparer and Application Identifier
 	 * as well as Abstract, Bibliographic and Copyright File
 	 * 
-	 * @return Vector of all active metadata files
+	 * @return List of all active metadata files
 	 */
-	public Vector getFiles() {
-		Vector files = new Vector();
+	public List getFiles() {
+		List files = new ArrayList();
 		
 		if (publisher instanceof ISO9660File) {
 			files.add(publisher);

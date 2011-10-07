@@ -24,10 +24,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.POSIXFileMode;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import java.util.ArrayList;
 
 public class ISO9660Directory implements ISO9660HierarchyObject {
 	private String name;
@@ -69,8 +69,8 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	}
 
 	private void init() {
-		this.files = new Vector<ISO9660File>();
-		this.directories = new Vector<ISO9660Directory>();
+		this.files = new ArrayList<ISO9660File>();
+		this.directories = new ArrayList<ISO9660Directory>();
 		this.level = 1;
 		this.parent = this;
 		this.name = "";
@@ -122,9 +122,9 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	}
 	
 	/**
-	 * Returns a Vector of the directory's files
+	 * Returns a List of the directory's files
 	 * 
-	 * @return List of ISO9660File objects
+	 * @return List containing ISO9660File objects
 	 */
 	public List<ISO9660File> getFiles() {
 		if (!sorted) {
@@ -134,9 +134,9 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	}
 
 	/**
-	 * Returns a Vector of the directory's subdirectories
+	 * Returns a List of the directory's subdirectories
 	 * 
-	 * @return List of ISO9660Directory objects
+	 * @return List containing ISO9660Directory objects
 	 */
 	public List<ISO9660Directory> getDirectories() {
 		if (!sorted) {
@@ -499,8 +499,8 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 		}
 
 		clone.level = level;
-		clone.directories = new Vector<ISO9660Directory>();
-		clone.files = new Vector<ISO9660File>();
+		clone.directories = new ArrayList<ISO9660Directory>();
+		clone.files = new ArrayList<ISO9660File>();
 		clone.id = id;
 		clone.sortedIterator = null;
 		clone.sorted = false;

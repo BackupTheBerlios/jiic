@@ -19,10 +19,10 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * ISO 9660 Directory Iterator<br>
@@ -35,7 +35,7 @@ public class ISO9660DirectoryIterator implements Iterator<ISO9660Directory> {
 	private Iterator<ISO9660Directory> dirCollectionIterator;
 
 	public ISO9660DirectoryIterator(ISO9660Directory start, boolean sort) {
-		this.dirCollection = new Vector<ISO9660Directory>();
+		this.dirCollection = new ArrayList<ISO9660Directory>();
 		if (sort) {
 			setupSorted(start);
 		} else {
@@ -69,7 +69,7 @@ public class ISO9660DirectoryIterator implements Iterator<ISO9660Directory> {
 	}
 	
 	private List<ISO9660Directory> checkMoved(List<ISO9660Directory> dirs) {
-		List<ISO9660Directory> copy = new Vector<ISO9660Directory>(dirs);
+		List<ISO9660Directory> copy = new ArrayList<ISO9660Directory>(dirs);
 		Iterator<ISO9660Directory> it = dirs.iterator();
 		while (it.hasNext()) {
 			ISO9660Directory dir = it.next();

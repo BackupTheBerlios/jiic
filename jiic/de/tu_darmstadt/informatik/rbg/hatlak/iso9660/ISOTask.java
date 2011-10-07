@@ -22,7 +22,6 @@ package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -37,10 +36,12 @@ import de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl.JolietConfig;
 import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.POSIXFileMode;
 import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.RockRidgeConfig;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ISOTask extends MatchingTask {
 	private File baseDir, destFile, bootImage;
-	private Vector<FileSet> filesets;
+	private List<FileSet> filesets;
 	private String name, system, publisher, dataPreparer, copyrightFile, bootImageID,
 		bootImageEmulation, bootImagePlatformID, movedDirectoriesStoreName;
 	private boolean allowASCII, restrictDirDepthTo8, forceDotDelimiter,
@@ -52,7 +53,7 @@ public class ISOTask extends MatchingTask {
 	@Override
 	public void init() {
 		baseDir = destFile = bootImage = null;
-		filesets = new Vector<FileSet>();
+		filesets = new ArrayList<FileSet>();
 		name = system = publisher = dataPreparer = bootImageID = "";
 		copyrightFile = null;
 		movedDirectoriesStoreName = "rr_moved";
@@ -214,7 +215,7 @@ public class ISOTask extends MatchingTask {
         if (baseDir != null) {
             FileSet fs = (FileSet) getImplicitFileSet().clone();
             fs.setDir(baseDir);
-            filesets.addElement(fs);
+            filesets.add(fs);
         }
 
 		Iterator<FileSet> it = filesets.iterator();
@@ -283,12 +284,12 @@ public class ISOTask extends MatchingTask {
 
 	public void addFileset(FileSet set) {
 		set.setDir(baseDir);
-		filesets.addElement(set);
+		filesets.add(set);
 	}
 	
 	public void addISOFileset(ISOFileSet set) {
 		set.setDir(baseDir);
-		filesets.addElement(set);
+		filesets.add(set);
 	}
 
 	public void setName(String name) {
