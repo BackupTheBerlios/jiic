@@ -40,7 +40,7 @@ public class ISO9660MovedDirectory implements ISO9660HierarchyObject {
 	private ISO9660Directory parent;
 	private Object id;
 	private POSIXFileMode filemode;
-
+	
 	/**
 	 * Create file from File object
 	 * 
@@ -138,7 +138,7 @@ public class ISO9660MovedDirectory implements ISO9660HierarchyObject {
 	 * @return Full ISO 9660 file name
 	 */
 	public String getFullName() {
-		return filename;
+		return getName() + ";" + getVersion();
 	}
 
 	/**
@@ -297,6 +297,10 @@ public class ISO9660MovedDirectory implements ISO9660HierarchyObject {
 		return getParentDirectory().getRoot();
 	}
 	
+	public boolean isDirectory() {
+		return true;
+	}
+	
 	@Override
 	public ISO9660MovedDirectory clone() {
 		ISO9660MovedDirectory clone = null;
@@ -307,9 +311,5 @@ public class ISO9660MovedDirectory implements ISO9660HierarchyObject {
 			e.printStackTrace();
 		}
 		return clone;
-	}
-
-	public boolean isDirectory() {
-		return true;
 	}
 }
