@@ -19,7 +19,8 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl;
 
-import java.util.Vector;
+import java.util.Map;
+import java.util.Set;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
@@ -34,6 +35,7 @@ public class JolietNamingConventions extends NamingConventions {
 		super("Joliet");
 	}
 	
+	@Override
 	public void apply(ISO9660Directory dir) throws HandlerException {
 		// Joliet directory name restrictions:
 		// Directory Identifier length (filename) <= 128 bytes (64 characters)
@@ -53,6 +55,7 @@ public class JolietNamingConventions extends NamingConventions {
 		setFilename(dir, filename);
 	}
 
+	@Override
 	public void apply(ISO9660File file) throws HandlerException {
 		// Joliet file name restrictions:
 		// File Identifier length (filename + extension + overhead) <= 128 bytes (64 characters)
@@ -99,15 +102,17 @@ public class JolietNamingConventions extends NamingConventions {
 		return name.replaceAll("[*/:;?\\\\]", "_");
 	}
 	
-	public void addDuplicate(Vector duplicates, String name, int version) {
-		String[] data = {name.toUpperCase(), String.valueOf(version)};
-		duplicates.add(data);
+	@Override
+	public void addDuplicate(Map<String, Set<Integer>> duplicates, String name, int version) {
+		super.addDuplicate(duplicates, name.toUpperCase(), version);
 	}
 
+	@Override
 	public boolean checkFilenameEquality(String name1, String name2) {
 		return name1.equalsIgnoreCase(name2);
 	}
 
+	@Override
 	public void checkPathLength(String isoPath) {
 		// "Remainder of ISO 9660 section 6.8.2.1": 240 Byte (120 characters)
 		if (isoPath.length() > 120) {
