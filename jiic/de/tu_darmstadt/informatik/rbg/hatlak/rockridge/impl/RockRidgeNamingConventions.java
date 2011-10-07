@@ -19,9 +19,12 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl;
 
-import java.util.Vector;
+import java.util.Map;
+import java.util.Set;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.NamingConventions;
 
 public class RockRidgeNamingConventions extends NamingConventions {
 	public static boolean HIDE_MOVED_DIRECTORIES_STORE = true;
@@ -35,6 +38,7 @@ public class RockRidgeNamingConventions extends NamingConventions {
 		super("Rock Ridge");
 	}
 	
+	@Override
 	public void apply(ISO9660Directory dir) {
 		String filename = normalize(dir.getName());
 
@@ -46,6 +50,7 @@ public class RockRidgeNamingConventions extends NamingConventions {
 		setFilename(dir, filename);
 	}
 
+	@Override
 	public void apply(ISO9660File file) {
 		String filename = normalize(file.getFilename());
 		String extension = normalize(file.getExtension());
@@ -66,10 +71,12 @@ public class RockRidgeNamingConventions extends NamingConventions {
 		setFilename(file, filename, extension);
 	}
 
-	public boolean checkDuplicate(Vector duplicates, String name, int version) {
+	@Override
+	public boolean checkDuplicate(Map<String, Set<Integer>> duplicates, String name, int version) {
 		return checkDuplicate(duplicates, name, version, false);
 	}
 
+	@Override
 	public void endRenaming(ISO9660File file) {
 		if (VERBOSE) {
 			System.out.println(" to " + file.getName());
@@ -83,6 +90,7 @@ public class RockRidgeNamingConventions extends NamingConventions {
 		return name;
 	}
 	
+	@Override
 	public void checkPathLength(String isoPath) {
 		// Nothing to do here (Rock Ridge has no own path length constraint -> ISO 9660 check is sufficient)
 	}
