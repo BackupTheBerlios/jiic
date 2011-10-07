@@ -196,7 +196,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 * @return Full ISO 9660 file name
 	 */
 	public String getFullName() {
-		return getName() + ";" + getVersion();
+		return new StringBuilder(100).append(getName()).append(";").append(getVersion()).toString();
 	}
 
 	/**

@@ -163,13 +163,13 @@ public class ISO9660Directory implements ISO9660HierarchyObject {
 	}
 
 	public String getISOPath() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder(255);
 		getISOPath(buf);
 		
 		return buf.toString();
 	}
 	
-	private void getISOPath(StringBuffer buf) {
+	private void getISOPath(StringBuilder buf) {
 		ISO9660Directory parent = getParentDirectory();
 		if (parent==this) {
 			// Root reached
