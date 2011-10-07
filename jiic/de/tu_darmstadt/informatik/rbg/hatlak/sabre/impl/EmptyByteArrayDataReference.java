@@ -37,13 +37,6 @@ public class EmptyByteArrayDataReference implements DataReference {
 	}
 
 	public InputStream createInputStream() throws IOException {
-		byte[] buffer = null;
-		
-		buffer = new byte[length];
-		for (int i=0; i<length; i++) {
-			buffer[i] = 0;
-		}
-
-		return new ByteArrayInputStream(buffer);
+		return new ByteArrayInputStream(new byte[length]);
 	}
 }
