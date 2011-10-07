@@ -36,7 +36,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	private static final long serialVersionUID = 1L;
 	private String filename, extension;
 	private int version;
-	private boolean enforce8plus3, isMovedDirectory;
+	private boolean enforce8plus3;
 	private ISO9660Directory parent;
 	private Object id;
 	private File file;
@@ -57,7 +57,6 @@ public class ISO9660File implements ISO9660HierarchyObject {
 		setVersion(version);
 		id = new Object();
 		enforce8plus3 = false;
-		isMovedDirectory = false;
 		
 		if (isDirectory()) {
 			throw new HandlerException("Cannot wrap directory in " + getClass() + ": " + file.getAbsolutePath());
@@ -77,7 +76,6 @@ public class ISO9660File implements ISO9660HierarchyObject {
 		setVersion(version);
 		id = new Object();
 		enforce8plus3 = false;
-		isMovedDirectory = false;
 		
 		if (isDirectory()) {
 			throw new HandlerException("Cannot wrap directory in " + getClass() + ": " + file.getAbsolutePath());
@@ -140,38 +138,15 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	}
 	
 	public String getName() {
-
-            if(this.cachedName == null){
-
-		if (isMovedDirectory()) {
-			this.cachedName = filename;
-		}else // else
-		
-		if (!extension.equals("") || enforceDotDelimiter) {
-			this.cachedName = new StringBuilder(100).append(filename).append(".").append(extension).toString();
-		} else{// else
-
-                    this.cachedName = filename;
-	}	
-            }
-            return this.cachedName;
+		if (this.cachedName == null) {
+			if (!extension.equals("") || enforceDotDelimiter) {
+				this.cachedName = new StringBuilder(100).append(filename).append(".").append(extension).toString();
+			} else{
+				this.cachedName = filename;
+			}	
+		}
+		return this.cachedName;
     }
-	/**
-	 * Declare this file to be a moved directory "totem pole" 
-	 */
-	public void setIsMovedDirectory() {
-                this.cachedName = null;
-		isMovedDirectory = true;
-	}
-
-	/**
-	 * Returns whether this represents a moved directory "totem pole"
-	 * 
-	 * @return Whether this is a moved directory
-	 */
-	public boolean isMovedDirectory() {
-		return isMovedDirectory;
-	}
 
 	/**
 	 * Set the name of the file (without dot)
@@ -221,10 +196,6 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 * @return Full ISO 9660 file name
 	 */
 	public String getFullName() {
-		if (isMovedDirectory()) {
-			return filename;
-		} // else
-
 		return getName() + ";" + getVersion();
 	}
 
