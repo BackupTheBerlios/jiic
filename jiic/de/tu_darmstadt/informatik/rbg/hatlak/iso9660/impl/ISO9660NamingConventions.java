@@ -19,7 +19,8 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
-import java.util.Vector;
+import java.util.Map;
+import java.util.Set;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
@@ -37,6 +38,7 @@ public class ISO9660NamingConventions extends NamingConventions {
 		super("ISO 9660");
 	}
 	
+	@Override
 	public void apply(ISO9660Directory dir) throws HandlerException {
 		// ISO 9660 directory restrictions:
 		// - character set: uppercase letters, digits and underscore
@@ -57,6 +59,7 @@ public class ISO9660NamingConventions extends NamingConventions {
 		setFilename(dir, filename);
 	}
 
+	@Override
 	public void apply(ISO9660File file) throws HandlerException {
 		// ISO 9660 file name restrictions:
 		// - character set: uppercase letters, digits, underscore, dot and semicolon
@@ -144,15 +147,17 @@ public class ISO9660NamingConventions extends NamingConventions {
 		return name.replaceAll("[*/:;?\\\\]", "_");
 	}
 	
-	public void addDuplicate(Vector duplicates, String name, int version) {
-		String[] data = {name.toUpperCase(), version+""};
-		duplicates.add(data);
+	@Override
+	public void addDuplicate(Map<String, Set<Integer>> duplicates, String name, int version) {
+		super.addDuplicate(duplicates, name.toUpperCase(), version);
 	}
 
+	@Override
 	public boolean checkFilenameEquality(String name1, String name2) {
 		return name1.equalsIgnoreCase(name2);
 	}
 
+	@Override
 	public void checkPathLength(String isoPath) {
 		// ISO 9660:6.8.2.1: 255 Byte (255 characters)
 		if (isoPath.length() > 255) {
