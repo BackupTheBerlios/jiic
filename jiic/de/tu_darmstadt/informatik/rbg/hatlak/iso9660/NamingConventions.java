@@ -112,17 +112,11 @@ public abstract class NamingConventions {
 
 	public void incrementFilename(ISO9660Directory dir) throws HandlerException {
 		String filename = dir.getName();
+		
 		if (filename.length() > 0) {
-			int number = -1;
-			int position = filename.length()-1;
-			while (position >= 0) {
-				try {
-					number = Integer.parseInt(filename.substring(position, filename.length()));
-					position--;
-				} catch (NumberFormatException e) {	
-					break;
-				}
-			}
+			int[] pair = getNumericSuffix(filename);
+			int number = pair[0];
+			int position = pair[1];
 			
 			if (number >= 0) {
 				// Filename ends with a number -> overwrite with incremented number
@@ -151,20 +145,14 @@ public abstract class NamingConventions {
 
 		setFilename(dir, filename);
 	}
-	
+			
 	public void incrementFilename(ISO9660File file) throws HandlerException {
 		String filename = file.getFilename();
+		
 		if (filename.length() > 0) {
-			int number = -1;
-			int position = filename.length()-1;
-			while (position >= 0) {
-				try {
-					number = Integer.parseInt(filename.substring(position, filename.length()));
-					position--;
-				} catch (NumberFormatException e) {	
-					break;
-				}
-			}
+			int[] pair = getNumericSuffix(filename);
+			int number = pair[0];
+			int position = pair[1];
 			
 			if (number >= 0) {
 				// Filename ends with a number -> overwrite with incremented number
@@ -198,6 +186,22 @@ public abstract class NamingConventions {
 
 		setFilename(file, filename);
 	}
+	
+	static private int[] getNumericSuffix(String filename){
+		int number = -1;
+		int position = filename.length() - 1;
+		
+		while (position >=0 && Character.isDigit(filename.charAt(position))) {
+			position--;
+		}
+		if (position < filename.length() - 1) {
+			String substring = filename.substring(position + 1, filename.length());
+			if (substring.length() < 10) {
+				number = Integer.parseInt(substring);
+			}
+		}
+		return new int[] {number, position};
+    }
 
 	public boolean checkFilenameEquality(String name1, String name2) {
 		return name1.equals(name2);
