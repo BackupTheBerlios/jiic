@@ -19,12 +19,12 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Vector;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.FilenameDataReference;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
@@ -109,7 +109,7 @@ public class ISO9660RockRidgeFactory extends ISO9660Factory {
 		if (dir.getRoot()==root) {
 			// Save only mappings from ISO 9660 hierarchy
 			if (! originalParentMapper.containsKey(originalParent)) {
-				originalParentMapper.put(originalParent, new Vector<ISO9660Directory>());
+				originalParentMapper.put(originalParent, new ArrayList<ISO9660Directory>());
 			}
 			Collection<ISO9660Directory> children = originalParentMapper.get(originalParent);
 			children.add(dir);
