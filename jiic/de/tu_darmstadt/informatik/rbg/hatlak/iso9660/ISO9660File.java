@@ -290,17 +290,18 @@ public class ISO9660File implements ISO9660HierarchyObject {
 				} // else: versions are equal -> file will be renamed later
 			} // else: Compare filenames
 			
-			int test = getFilename().toUpperCase().compareTo(file.getFilename().toUpperCase());
+                        int test = getFilename().compareToIgnoreCase(file.getFilename());
+
 			if (test!=0) {
 				// Different filenames -> no need to check extension 
 				return test;
 			} // else: Compare extensions
 			
-			return getExtension().toUpperCase().compareTo(file.getExtension().toUpperCase());
+                        return getExtension().compareToIgnoreCase(file.getExtension());
 		} else
 		if (object instanceof ISO9660Directory) {
 			ISO9660Directory dir = (ISO9660Directory) object;
-			return getFullName().toUpperCase().compareTo(dir.getName().toUpperCase());
+                        return getFullName().compareToIgnoreCase(dir.getName());
 		} else {
 			throw new ClassCastException();			
 		}		
