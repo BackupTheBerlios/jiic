@@ -21,19 +21,18 @@ package de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.NamingConventions;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
-import java.util.List;
-import java.util.regex.Pattern;
 
 public class JolietNamingConventions extends NamingConventions {
 	public static boolean FORCE_DOT_DELIMITER = true;
 	public static int MAX_NAME_LENGTH = 64;
-        // Note: Backslash escaped for both the RegEx and Java itself
-        public static final Pattern PATTERN = Pattern.compile("[*/:;?\\\\]");
+	// Note: Backslash escaped for both the RegEx and Java itself
+	public static final Pattern PATTERN = Pattern.compile("[*/:;?\\\\]");
 
 	public JolietNamingConventions() {
 		super("Joliet");
@@ -102,9 +101,7 @@ public class JolietNamingConventions extends NamingConventions {
 	}
 
 	private String normalize(String name) {
-
-            return PATTERN.matcher(name).replaceAll("_");
-
+		return PATTERN.matcher(name).replaceAll("_");
 	}
 	
 	@Override
