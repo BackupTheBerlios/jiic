@@ -19,12 +19,12 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
@@ -50,7 +50,7 @@ public class ISO9660Factory {
 	LayoutHelper helper;
 	ISO9660RootDirectory root;
 	HashMap volumeFixups, typeLPTFixups, typeMPTFixups, dirFixups, fileFixups, locationFixups;
-	Vector emptyFileFixups;
+	List emptyFileFixups;
 	
 	public ISO9660Factory(StreamHandler streamHandler, StandardConfig config, LayoutHelper helper, ISO9660RootDirectory root, HashMap volumeFixups) {
 		this.streamHandler = streamHandler;
@@ -68,7 +68,7 @@ public class ISO9660Factory {
 		this.fileFixups = new HashMap(fileCount);
 		this.locationFixups = new HashMap(fileCount);
 
-		this.emptyFileFixups = new Vector();
+		this.emptyFileFixups = new ArrayList();
 	}
 	
 	public void applyNamingConventions() throws HandlerException {
@@ -210,8 +210,7 @@ public class ISO9660Factory {
 		Fixup dotdotLengthFixup = (Fixup) dotdotMemory.get("drDataLengthFixup");
 
 		// Prepare files and directories to be processed in sorted order
-		List<ISO9660HierarchyObject> contents = new Vector<ISO9660HierarchyObject>();
-		contents.addAll(dir.getDirectories());
+		List<ISO9660HierarchyObject> contents = new ArrayList<ISO9660HierarchyObject>();		contents.addAll(dir.getDirectories());
 		contents.addAll(dir.getFiles());
 		Collections.sort(contents);
 			
