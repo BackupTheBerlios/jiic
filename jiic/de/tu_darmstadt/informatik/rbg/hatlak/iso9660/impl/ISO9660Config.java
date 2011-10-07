@@ -20,10 +20,18 @@
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
 import java.lang.Character.UnicodeBlock;
+import java.util.regex.Pattern;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ConfigException;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.StandardConfig;
 
 public class ISO9660Config extends StandardConfig {
+
+	private static final Pattern ECMA6_A_CHARACTERS_PATTERN =
+			Pattern.compile("[^"+ISO9660Constants.ECMA6_A_CHARACTERS+"]");
+	private static final Pattern ECMA6_D_CHARACTERS_PATTERN =
+			Pattern.compile("[^"+ISO9660Constants.ECMA6_D_CHARACTERS+"]");
+
 	private boolean restrictDirDepthTo8, allowASCII, padEnd;
 	
 	public ISO9660Config() {
@@ -106,26 +114,32 @@ public class ISO9660Config extends StandardConfig {
 		}
 	}
 
+	@Override
 	public void setDataPreparer(String dataPreparer) throws ConfigException {
 		super.setDataPreparer(checkAString(dataPreparer));
 	}
 
+	@Override
 	public void setPublisher(String publisher) throws ConfigException {
 		super.setPublisher(checkAString(publisher));
 	}
 
+	@Override
 	public void setSystemID(String systemID) throws ConfigException {
 		super.setSystemID(checkAString(systemID));
 	}
 
+	@Override
 	public void setApp(String app) throws ConfigException {
 		super.setApp(checkAString(app));
 	}
 
+	@Override
 	public void setVolumeID(String volumeID) throws ConfigException {
 		super.setVolumeID(checkDString(volumeID));
 	}
 
+	@Override
 	public void setVolumeSetID(String volumeSetID) throws ConfigException {
 		super.setVolumeSetID(checkDString(volumeSetID));
 	}
@@ -139,21 +153,21 @@ public class ISO9660Config extends StandardConfig {
 	}
 
 	private String checkAString(String string) {
-		if (allowsASCII()) {
+		if (allowsASCII())
 			return checkASCIIString(string);
-		} // else
-		return string.toUpperCase().replaceAll("[^"+ISO9660Constants.ECMA6_A_CHARACTERS+"]", "_");
+		else
+			return ECMA6_A_CHARACTERS_PATTERN.matcher(string.toUpperCase()).replaceAll("_");
 	}
 
 	private String checkDString(String string) {
-		if (allowsASCII()) {
+		if (allowsASCII())
 			return checkASCIIString(string);
-		} // else
-		return string.toUpperCase().replaceAll("[^"+ISO9660Constants.ECMA6_D_CHARACTERS+"]", "_");
+		else
+			return ECMA6_D_CHARACTERS_PATTERN.matcher(string.toUpperCase()).replaceAll("_");
 	}
 	
 	private String checkASCIIString(String string) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		for (int i=0; i<string.length(); i++) {
 			UnicodeBlock characterBlock = UnicodeBlock.of(string.charAt(i));
