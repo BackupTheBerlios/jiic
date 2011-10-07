@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Vector;
 
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class NamingConventions {
 	public static boolean VERBOSE = false;
@@ -170,7 +173,7 @@ public abstract class NamingConventions {
 				try {
 					copy = new ISO9660File(file);
 				} catch (HandlerException e) {
-					e.printStackTrace();
+					e.printStackTrace(System.err);
 				}
 				apply(copy);
 				if (checkFilenameEquality(copy.getFilename(), filename)) {
@@ -208,22 +211,21 @@ public abstract class NamingConventions {
 	}
 	
 	public void processDirectory(ISO9660Directory dir) throws HandlerException {
-		Vector duplicates = new Vector();
+		Map<String, Set<Integer>> duplicates = new HashMap<String, Set<Integer>>();
 		
 		// Prepare files and directories to be processed in sorted order
-                List dirs = dir.getDirectories();
-                List files = dir.getFiles();
+        List<ISO9660Directory> dirs = dir.getDirectories();
+        List<ISO9660File> files = dir.getFiles();
 
-		List contents = new ArrayList(dirs.size()+files.size());
+		List<ISO9660HierarchyObject> contents = new ArrayList<ISO9660HierarchyObject>(dirs.size() + files.size());
 		contents.addAll(dirs);
 		contents.addAll(files);
 		Collections.sort(contents);
 
-		boolean duplicate;
-		Iterator it = contents.iterator();
+		Iterator<ISO9660HierarchyObject> it = contents.iterator();
 		while (it.hasNext()) {
-			duplicate = false;
-			Object object = it.next();
+			boolean duplicate = false;
+			ISO9660HierarchyObject object = it.next();
 			if (object instanceof ISO9660Directory) {
 				ISO9660Directory subdir = (ISO9660Directory) object;
 				apply(subdir);
@@ -236,8 +238,7 @@ public abstract class NamingConventions {
 				}
 				addDuplicate(duplicates, subdir.getName(), -1);
 				checkPathLength(subdir.getISOPath());
-			} else
-			if (object instanceof ISO9660File) {
+			} else if (object instanceof ISO9660File){
 				ISO9660File file = (ISO9660File) object;
 				apply(file);
 				while (checkDuplicate(duplicates, file.getName(), file.getVersion())) {
@@ -255,29 +256,25 @@ public abstract class NamingConventions {
 		}
 	}
 
-	public boolean checkDuplicate(Vector duplicates, String name, int version) {
+	public boolean checkDuplicate(Map<String, Set<Integer>> duplicates, String name, int version) {
 		return checkDuplicate(duplicates, name, version, true);
 	}
 
-	public boolean checkDuplicate(Vector duplicates, String name, int version, boolean checkVersion) {
-		for (int i=0; i<duplicates.size(); i++) {
-			String[] data = (String[]) duplicates.get(i);
-			// Check for name equality
-			if (checkFilenameEquality(data[0], name)) {
-				int aVersion = Integer.parseInt(data[1]);
-				// Require version equality for files
-				if (!checkVersion || aVersion==-1 || version==aVersion) {
-					return true;
-				}
-			}
+	public boolean checkDuplicate(Map<String, Set<Integer>> duplicates, String name, int version, boolean checkVersion) {
+		Set<Integer> versions = duplicates.get(name);
+		if(versions == null) {
+			return false;
 		}
-		
-		return false;
+		return ! checkVersion || versions.contains(-1) || versions.contains(version);
 	}
-	
-	public void addDuplicate(Vector duplicates, String name, int version) {
-		String[] data = {name, version+""};
-		duplicates.add(data);
+
+	public void addDuplicate(Map<String, Set<Integer>> duplicates, String name, int version) {
+		Set<Integer> set = duplicates.get(name);
+		if(set == null){
+			set = new HashSet<Integer>(1, 1.0f);
+			duplicates.put(name, set);
+		}
+		set.add(version);
 	}
 
 	public abstract void apply(ISO9660Directory dir) throws HandlerException;
