@@ -42,6 +42,8 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	private File file;
 	private POSIXFileMode filemode;
 
+        private String cachedName = null;
+
 	/**
 	 * Create file from File object
 	 * 
@@ -138,21 +140,27 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	}
 	
 	public String getName() {
+
+            if(this.cachedName == null){
+
 		if (isMovedDirectory()) {
-			return filename;
-		} // else
+			this.cachedName = filename;
+		}else // else
 		
 		if (!extension.equals("") || enforceDotDelimiter) {
-			return filename + "." + extension;
-		} // else
+			this.cachedName = new StringBuilder(100).append(filename).append(".").append(extension).toString();
+		} else{// else
 
-		return filename;
+                    this.cachedName = filename;
 	}	
-	
+            }
+            return this.cachedName;
+    }
 	/**
 	 * Declare this file to be a moved directory "totem pole" 
 	 */
 	public void setIsMovedDirectory() {
+                this.cachedName = null;
 		isMovedDirectory = true;
 	}
 
@@ -171,6 +179,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 * @param filename File name
 	 */
 	public void setFilename(String filename) {
+                this.cachedName = null;
 		this.filename = filename;
 		if (parent!=null) {
 			parent.forceSort();
@@ -183,6 +192,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 * @param extension File extension
 	 */
 	public void setExtension(String extension) {
+                this.cachedName = null;
 		this.extension = extension;
 		if (parent!=null) {
 			parent.forceSort();
@@ -190,6 +200,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	}
 	
 	public void setName(String name) {
+                this.cachedName = null;
 		Matcher m = ISO9660File.FILEPATTERN.matcher(name);
 		if (m.matches()) {
 			filename = m.group(1);
@@ -284,6 +295,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	 * @param force Whether to force this file's name to include the dot character
 	 */
 	public void enforceDotDelimiter(boolean force) {
+                this.cachedName = null;
 		this.enforceDotDelimiter = force;
 	}
 
