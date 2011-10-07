@@ -19,9 +19,11 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
@@ -205,9 +207,12 @@ public abstract class NamingConventions {
 		Vector duplicates = new Vector();
 		
 		// Prepare files and directories to be processed in sorted order
-		Vector contents = new Vector();
-		contents.addAll(dir.getDirectories());
-		contents.addAll(dir.getFiles());
+                List dirs = dir.getDirectories();
+                List files = dir.getFiles();
+
+		List contents = new ArrayList(dirs.size()+files.size());
+		contents.addAll(dirs);
+		contents.addAll(files);
 		Collections.sort(contents);
 
 		boolean duplicate;
