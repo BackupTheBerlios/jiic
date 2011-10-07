@@ -19,18 +19,26 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
 
 public class ISO9660DateDataReference implements DataReference {
+	private static final byte[] EMPTY_DATE_BUFFER = new byte[] { 0x30, 0x30,
+			0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,
+			0x30, 0x30, 0x30, 0x00 };
+
 	private Date date = null;
-	
+
 	public ISO9660DateDataReference(Date date) {
 		this.date = date;
 	}
-	
+
 	public ISO9660DateDataReference(long date) {
 		this(new Date(date));
 	}
@@ -42,35 +50,28 @@ public class ISO9660DateDataReference implements DataReference {
 	public long getLength() {
 		return 17;
 	}
-	
+
 	public InputStream createInputStream() throws IOException {
 		byte[] buffer;
-		if (date==null) {
+		if (date == null) {
 			buffer = getEmptyDate();
 		} else {
 			buffer = getDate();
 		}
-		
+
 		return new ByteArrayInputStream(buffer);
 	}
 
-	private byte[] getEmptyDate() {
-		byte[] buffer = new byte[17];
-		
-		for (int i=0; i<16; i++) {
-			buffer[i] = 0x30;
-		}
-		buffer[16] = 0;
-		
-		return buffer;
+	private static byte[] getEmptyDate() {
+		return EMPTY_DATE_BUFFER;
 	}
-	
+
 	private byte[] getDate() {
 		byte[] buffer = new byte[17];
-		
+
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(date);
-		
+
 		// Parse date
 		int year = cal.get(Calendar.YEAR);
 		int month = cal.get(Calendar.MONTH) + 1;
@@ -91,16 +92,16 @@ public class ISO9660DateDataReference implements DataReference {
 		dateString.append(padIntToString(second, 2));
 		dateString.append(padIntToString(hundredth_sec, 2));
 		dateString.append(0);
-		
+
 		buffer = dateString.toString().getBytes();
 		buffer[16] = (byte) gmt_offset;
-		
+
 		return buffer;
 	}
 
 	private String padIntToString(int value, int length) {
-                StringBuilder buf = new StringBuilder(length);
-                buf.append(value);
+		StringBuilder buf = new StringBuilder(length);
+		buf.append(value);
 		while (buf.length() < length) {
 			buf.insert(0, "0");
 		}
