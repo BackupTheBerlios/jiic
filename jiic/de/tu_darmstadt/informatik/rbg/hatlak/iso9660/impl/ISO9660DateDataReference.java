@@ -82,7 +82,7 @@ public class ISO9660DateDataReference implements DataReference {
 		int gmt_offset = cal.get(Calendar.ZONE_OFFSET) / (15 * 60 * 1000);
 
 		// Create ISO9660 date
-		StringBuffer dateString = new StringBuffer(17);
+		StringBuilder dateString = new StringBuilder(17);
 		dateString.append(padIntToString(year, 4));
 		dateString.append(padIntToString(month, 2));
 		dateString.append(padIntToString(day, 2));
@@ -99,8 +99,8 @@ public class ISO9660DateDataReference implements DataReference {
 	}
 
 	private String padIntToString(int value, int length) {
-		String intValue = "" + value;
-		StringBuffer buf = new StringBuffer(intValue);
+                StringBuilder buf = new StringBuilder(length);
+                buf.append(value);
 		while (buf.length() < length) {
 			buf.insert(0, "0");
 		}

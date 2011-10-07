@@ -332,7 +332,8 @@ public class ISO9660File implements ISO9660HierarchyObject {
 		if (parent==null) {
 			throw new NullPointerException("Cannot determine path without parent directory.");
 		}
-		return parent.getISOPath() + File.separator + getFullName();
+
+                return new StringBuilder(255).append(parent.getISOPath()).append(File.separator).append(getFullName()).toString();
 	}
 
 	public Object getID() {
