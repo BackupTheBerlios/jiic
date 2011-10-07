@@ -42,7 +42,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
 	private File file;
 	private POSIXFileMode filemode;
 
-        private String cachedName = null;
+	private String cachedName = null;
 
 	/**
 	 * Create file from File object
