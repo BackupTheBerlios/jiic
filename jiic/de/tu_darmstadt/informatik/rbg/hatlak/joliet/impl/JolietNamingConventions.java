@@ -100,7 +100,7 @@ public class JolietNamingConventions extends NamingConventions {
 	}
 	
 	public void addDuplicate(Vector duplicates, String name, int version) {
-		String[] data = {name.toUpperCase(), version+""};
+		String[] data = {name.toUpperCase(), String.valueOf(version)};
 		duplicates.add(data);
 	}
 
