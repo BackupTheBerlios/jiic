@@ -21,16 +21,19 @@ package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.NamingConventions;
+import de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl.JolietNamingConventions;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public class ISO9660NamingConventions extends NamingConventions {
 	public static int INTERCHANGE_LEVEL = 1;
 	public static boolean FORCE_ISO9660_CHARSET = true;
 	public static boolean FORCE_DOT_DELIMITER = true;
+	private static final Pattern AZ09 = Pattern.compile("[^A-Z0-9_]");
 	private boolean enforce8plus3;
 	private int MAX_DIRECTORY_LENGTH, MAX_FILENAME_LENGTH, MAX_EXTENSION_LENGTH;
 
@@ -138,13 +141,10 @@ public class ISO9660NamingConventions extends NamingConventions {
 	}
 
 	private String normalize(String name) {
-		if (FORCE_ISO9660_CHARSET) {
-			name = name.toUpperCase();
-			return name.replaceAll("[^A-Z0-9_]", "_");
-		} // else
-
-		// Note: Backslash escaped for both the RegEx and Java itself
-		return name.replaceAll("[*/:;?\\\\]", "_");
+		if (FORCE_ISO9660_CHARSET)
+			return AZ09.matcher(name.toUpperCase()).replaceAll("_");
+		else
+			return JolietNamingConventions.PATTERN.matcher(name).replaceAll("_");
 	}
 	
 	@Override
