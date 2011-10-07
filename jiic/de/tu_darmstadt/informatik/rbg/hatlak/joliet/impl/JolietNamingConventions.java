@@ -80,7 +80,7 @@ public class JolietNamingConventions extends NamingConventions {
 			}
 		}
 		
-		int versionAndSeparatorsLength = (file.getVersion()+"").length() + 2; // ;. -> 2
+		int versionAndSeparatorsLength = (String.valueOf(file.getVersion())).length() + 2; // ;. -> 2
 		if (filename.length() + extension.length() + versionAndSeparatorsLength > MAX_NAME_LENGTH) {
 			if (filename.length() >= extension.length()) {
 				// Shorten filename
