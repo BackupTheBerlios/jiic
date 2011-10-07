@@ -22,14 +22,13 @@ package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
-
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public abstract class NamingConventions {
 	public static boolean VERBOSE = false;
