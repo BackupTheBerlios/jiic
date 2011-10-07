@@ -19,12 +19,19 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
 
 public class ISO9660ShortDateDataReference implements DataReference {
+    private static final byte[] EMPTY_DATE_BUFFER = new byte[] { 0x00, 0x00,
+    	0x00, 0x00, 0x00, 0x00, 0x00};
+	
 	private Date date = null;
 	
 	public ISO9660ShortDateDataReference(Date date) {
@@ -45,18 +52,13 @@ public class ISO9660ShortDateDataReference implements DataReference {
 	
 	public InputStream createInputStream() throws IOException {
 		byte[] buffer;
-		if (date==null) {
-			buffer = getEmptyDate();
+		if (date == null) {
+			buffer = EMPTY_DATE_BUFFER;
 		} else {
 			buffer = getDate();
 		}
 		
 		return new ByteArrayInputStream(buffer);
-	}
-
-	private byte[] getEmptyDate() {
-		byte[] buffer = {0,0,0,0,0,0,0};		
-		return buffer;
 	}
 	
 	private byte[] getDate() {

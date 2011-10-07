@@ -50,28 +50,24 @@ public class ISO9660DateDataReference implements DataReference {
 	public long getLength() {
 		return 17;
 	}
-
+	
 	public InputStream createInputStream() throws IOException {
 		byte[] buffer;
 		if (date == null) {
-			buffer = getEmptyDate();
+			buffer = EMPTY_DATE_BUFFER;
 		} else {
 			buffer = getDate();
 		}
-
+		
 		return new ByteArrayInputStream(buffer);
 	}
-
-	private static byte[] getEmptyDate() {
-		return EMPTY_DATE_BUFFER;
-	}
-
+	
 	private byte[] getDate() {
 		byte[] buffer = new byte[17];
-
+		
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(date);
-
+		
 		// Parse date
 		int year = cal.get(Calendar.YEAR);
 		int month = cal.get(Calendar.MONTH) + 1;
