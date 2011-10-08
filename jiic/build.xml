@@ -126,7 +126,7 @@
 	  ****************************************************
 	-->
 	
-	<target name="test" depends="taskdef,java.test,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths,conflict,executable" description="Run the available tests" />	
+	<target name="test" depends="taskdef,java.test,boot,longtest,minimal,eldream,empty,copyright,linux,linux-norr,linux-isoonly,paths,conflict,executable,roundtrip" description="Run the available tests" />	
 
 	<!-- Properties for test dependencies -->
 	<property name="kernelversion" value="2.6.20"/>
@@ -270,6 +270,34 @@
 		<jiic:iso destfile="test/executable.iso" name="Linux">
 			<isofileset dir="test/exe" filemode="565" dirmode="757" />
 		</jiic:iso>
+	</target>
+	
+	<!-- Test files get packaged and comes back out ok -->
+	<target name="roundtrip" depends="roundtrip.extractor,roundtrip.skipped" if="extractor.exists">
+		<jiic:iso destfile="test/roundtrip.iso" name="ISO">
+			<fileset dir="testsuite" defaultexcludes="false" />
+		</jiic:iso>
+		
+		<delete dir="test/roundtrip" />
+		<mkdir dir="test/roundtrip" />
+		<exec executable="file-roller">
+			<arg value="--extract-to=test/roundtrip" />
+			<arg value="test/roundtrip.iso" />
+		</exec>
+		
+		<exec executable="diff" failonerror="true">
+			<arg value="testsuite" />
+			<arg value="test/roundtrip" />
+		</exec>
+	</target>
+	<target name="roundtrip.extractor">
+		<property environment="env" />
+		<condition property="extractor.exists">
+			<available file="file-roller" filepath="${env.PATH}" />
+		</condition>
+	</target>
+	<target name="roundtrip.skipped" unless="extractor.exists">
+		<echo>extractor test skipped</echo>
 	</target>
 	
 </project>
