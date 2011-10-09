@@ -140,7 +140,7 @@
 
 	<!-- Check which tests we can run -->
 	<available file="${tomsrtbt}" property="tomsrtbt.exists" type="file" />
-	<available file="eldream/ed_1024.avi" property="eldream.exists" type="file"/>
+	<available file="eldream/ED_1024.avi" property="eldream.exists" type="file"/>
 	<available file="linux-${kernelversion}" property="linux.exists" type="dir" />
 	
 	<target name="taskdef" description="Load the built task">
@@ -210,7 +210,7 @@
 	<!-- Test an iso with elephants dream on it -->
 	<target name="eldream" if="eldream.exists" depends="eldream.skipped">
 		<jiic:iso destfile="test/eldream.iso" basedir="." name="Elephants Dream"
-			includes="eldream/ed_1024.avi"
+			includes="eldream/ED_1024.avi"
 		/>
 	</target>
 	<target name="eldream.skipped" unless="eldream.exists">
