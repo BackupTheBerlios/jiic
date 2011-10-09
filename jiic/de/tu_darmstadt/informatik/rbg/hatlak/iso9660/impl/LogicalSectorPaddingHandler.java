@@ -90,5 +90,6 @@ public class LogicalSectorPaddingHandler extends ChainingStreamHandler {
 			int pad = (int) (150*ISO9660Constants.LOGICAL_SECTOR_SIZE - bytesWritten % 16*ISO9660Constants.LOGICAL_SECTOR_SIZE);
 			super.data(new EmptyByteArrayDataReference(pad));
 		}
+		super.endDocument();
 	}
 }
