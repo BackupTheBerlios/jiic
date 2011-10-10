@@ -32,7 +32,7 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 
 public abstract class NamingConventions {
 	public static boolean VERBOSE = false;
-	private static HashMap extensionMapper;
+	private static Map<String,String> extensionMapper;
 	private String id;
 	
 	public NamingConventions(String id) {
@@ -47,7 +47,7 @@ public abstract class NamingConventions {
 	
 	public static void addExtensionMapping(String extension, String mapping) {
 		if (extensionMapper==null) {
-			extensionMapper = new HashMap();
+			extensionMapper = new HashMap<String,String>();
 		}
 		
 		if (!extensionMapper.containsKey(extension)) {
@@ -60,7 +60,7 @@ public abstract class NamingConventions {
 			return null;
 		}
 		
-		return (String) extensionMapper.get(extension);
+		return extensionMapper.get(extension);
 	}
 
 	public void startRenaming(ISO9660Directory dir) {
