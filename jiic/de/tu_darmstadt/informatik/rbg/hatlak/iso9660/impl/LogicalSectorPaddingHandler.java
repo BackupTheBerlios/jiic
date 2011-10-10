@@ -21,25 +21,31 @@ package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 
 import java.util.Stack;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.EmptyByteArrayDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.ContentHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Element;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Fixup;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StructureHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ChainingStreamHandler;
 
 public class LogicalSectorPaddingHandler extends ChainingStreamHandler {
 	private long bytesWritten;
-	private Stack elements;
+	private Stack<Element> elements;
 	private boolean padEnd;
 
 	public LogicalSectorPaddingHandler(StructureHandler chainingStructureHandler, ContentHandler chainingContentHandler) {
 		super(chainingStructureHandler, chainingContentHandler);
 		bytesWritten = 0;
-		elements = new Stack();
+		elements = new Stack<Element>();
 	}
 
 	public void setPadEnd(boolean padEnd) {
 		this.padEnd = padEnd;
 	}
 
+	@Override
 	public void startElement(Element element) throws HandlerException {
 		if (element instanceof LogicalSectorElement || isSAElement(element)) {
 			// Reset byte counter
@@ -59,16 +65,19 @@ public class LogicalSectorPaddingHandler extends ChainingStreamHandler {
 		return false;
 	}
 
+	@Override
 	public void data(DataReference reference) throws HandlerException {
 		bytesWritten += reference.getLength();
 		super.data(reference);
 	}
 
+	@Override
 	public Fixup fixup(DataReference reference) throws HandlerException {
 		bytesWritten += reference.getLength();
 		return super.fixup(reference);
 	}
 
+	@Override
 	public void endElement() throws HandlerException {
 		Object element = elements.pop();
 		if (element instanceof LogicalSectorElement) {
@@ -84,6 +93,7 @@ public class LogicalSectorPaddingHandler extends ChainingStreamHandler {
 		super.endElement();
 	}
 
+	@Override
 	public void endDocument() throws HandlerException {
 		if (padEnd) {
 			// Pad to 150 sectors (like mkisofs -pad does)
