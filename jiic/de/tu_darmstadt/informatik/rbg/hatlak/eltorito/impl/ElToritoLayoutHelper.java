@@ -53,22 +53,17 @@ public class ElToritoLayoutHelper extends LayoutHelper {
 	}
 	
 	@Override
-	public byte[] pad(String string, int targetByteLength) throws HandlerException {
-		byte[] bytes = new byte[targetByteLength];
-		byte[] original;
-		
+	public byte[] pad(String string, int targetByteLength) throws HandlerException {		
 		try {
-			original = string.getBytes("ISO-8859-1"); // ISO Latin 1
-			for (int i = 0; i < original.length; i++) {
-				bytes[i] = original[i];
-			}
-			for (int i = original.length; i < bytes.length; i++) {
-				bytes[i] = 0;
-			}
+			byte[] in = string.getBytes("ISO-8859-1"); // ISO Latin 1;
+			if (in.length == targetByteLength) return in;
+			
+			byte[] out = new byte[targetByteLength]; // Java initializes the array to 0s
+			System.arraycopy(in, 0, out, 0, Math.min(in.length, targetByteLength));
+			
+			return out;
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Missing ISO-8859-1 encoding, required by Java standard");
 		}
-		
-		return bytes;
 	}
 }

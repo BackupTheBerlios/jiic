@@ -20,6 +20,7 @@
 package de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.FilenameDataReference;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660Directory;
@@ -52,30 +53,23 @@ public class JolietLayoutHelper extends LayoutHelper {
 	
 	@Override
 	public byte[] pad(String string, int targetByteLength) throws HandlerException {
-		byte[] bytes = new byte[targetByteLength];
-		byte[] original = null;
-		int length = 0;
-		
 		try {
-			if (string!=null) {
-				original = string.getBytes("UTF-16BE"); // UCS-2
-				length = original.length;
+			byte[] in = string.getBytes("UTF-16BE"); // UCS-2
+			byte[] out = new byte[targetByteLength]; // Java initializes the array to 0s
+			System.arraycopy(in, 0, out, 0, Math.min(in.length, targetByteLength));
+			
+			// Pad with 0x20
+			if (in.length < targetByteLength) {
+				Arrays.fill(out, in.length, targetByteLength - 1, (byte) 0x20);
 			}
-			for (int i = 0; i < length; i++) {
-				bytes[i] = original[i];
-			}
-			for (int i = length; i < bytes.length; i++) {
-				bytes[i] = 0;
-				i++;
-				if (i < bytes.length) {
-					bytes[i] = 0x20;
-				}
-			}
-			bytes[bytes.length-1] = 0; // Zero-terminate String
+			
+			// zero terminate, two 0's for an even length, as this is a dbcs
+			out[targetByteLength - 1] = 0;
+			if (targetByteLength % 2 == 0) out[targetByteLength - 2] = 0;
+			
+			return out;
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Missing ISO-8859-1 encoding, required by Java standard");
 		}
-		
-		return bytes;
 	}
 }

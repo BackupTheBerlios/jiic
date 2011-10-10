@@ -32,6 +32,7 @@ public class SystemUseEntryElement extends Element {
 	
 	public byte[] getSignatureWord() {
 		if (signature != null) {
+			// TODO Handle character sets
 			return signature.getBytes();
 		}
 		return null;
@@ -41,6 +42,7 @@ public class SystemUseEntryElement extends Element {
 		return version;
 	}
 	
+	@Override
 	public Object getId() {
 		return signature;
 	}

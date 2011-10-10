@@ -19,9 +19,15 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.eltorito.impl;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.EmptyByteArrayDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.LSBFShortDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.LSBFWordDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Fixup;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteArrayDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteDataReference;
 
 public class ElToritoFactory {
 	private StreamHandler streamHandler;
@@ -160,25 +166,21 @@ public class ElToritoFactory {
 		// Vendor unique selection criteria (30 bytes): handle externally
 	}
 
+	/**
+	 * Convert a string to bytes and pad with zeros
+	 * @param string String to pad
+	 * @param pad Byte length
+	 * @return Padded byte string
+	 */
 	private byte[] pad(String string, int pad) {		
-		if (string.length() == pad) {
-			return string.getBytes();
-		}
-
-		if (string.length() > pad) {
-			return string.substring(0, pad).getBytes();
-		}
+		// TODO Deal with character sets
+		byte[] in = string.getBytes();		
+		if (in.length == pad) return in;
 		
-		byte[] bytes = new byte[pad];		
-		byte[] original = string.getBytes();
-		for (int i = 0; i < original.length; i++) {
-			bytes[i] = original[i];
-		}
-		for (int i = original.length; i < bytes.length; i++) {
-			bytes[i] = 0;
-		}
+		byte[] out = new byte[pad]; // Java initializes the array to 0s
+		System.arraycopy(in, 0, out, 0, Math.min(in.length, pad));
 		
-		return bytes;
+		return out;
 	}
 	
 	private int stringWordSum(byte[] stringData) throws HandlerException {

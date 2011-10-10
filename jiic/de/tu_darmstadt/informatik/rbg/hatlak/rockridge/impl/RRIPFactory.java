@@ -19,10 +19,15 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl;
 
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.*;
-import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660DateDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660ShortDateDataReference;
+import de.tu_darmstadt.informatik.rbg.hatlak.sabre.impl.BothWordDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Fixup;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteArrayDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteDataReference;
 
 public class RRIPFactory extends SUSPFactory {
 	public static boolean MKISOFS_COMPATIBILITY = true;
@@ -180,6 +185,7 @@ public class RRIPFactory extends SUSPFactory {
 			source = "PLEASE CONTACT THE IEEE STANDARDS DEPARTMENT, PISCATAWAY, NJ, USA FOR THE 1282 SPECIFICATION.";
 		}
 		
+		// TODO Handle character sets
 		ByteArrayDataReference idRef = new ByteArrayDataReference(id.getBytes());
 		ByteArrayDataReference descriptorRef = new ByteArrayDataReference(descriptor.getBytes());
 		ByteArrayDataReference sourceRef = new ByteArrayDataReference(source.getBytes());

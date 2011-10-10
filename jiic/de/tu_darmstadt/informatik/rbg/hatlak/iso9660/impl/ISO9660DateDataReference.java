@@ -22,6 +22,7 @@ package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -89,7 +90,11 @@ public class ISO9660DateDataReference implements DataReference {
 		dateString.append(padIntToString(hundredth_sec, 2));
 		dateString.append(0);
 
-		buffer = dateString.toString().getBytes();
+		try {
+			buffer = dateString.toString().getBytes("ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Missing ISO-8859-1 encoding, required by Java standard");
+		}
 		buffer[16] = (byte) gmt_offset;
 
 		return buffer;

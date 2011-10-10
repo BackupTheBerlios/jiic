@@ -19,6 +19,8 @@
 
 package de.tu_darmstadt.informatik.rbg.hatlak.iso9660.volumedescriptors;
 
+import java.io.UnsupportedEncodingException;
+
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.LayoutHelper;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.*;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
@@ -40,7 +42,11 @@ public abstract class ISO9660VolumeDescriptor {
 	}
 
 	ByteArrayDataReference getStandardId() {
-		return new ByteArrayDataReference(ISO9660Constants.STD_ID.getBytes());
+		try {
+			return new ByteArrayDataReference(ISO9660Constants.STD_ID.getBytes("ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Missing ISO-8859-1 encoding, required by Java standard");
+		}
 	}
 
 	ByteDataReference getVDVersion() {
