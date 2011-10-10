@@ -21,19 +21,27 @@ package de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl;
 
 import java.util.Stack;
 
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.ContentHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Element;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Fixup;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StructureHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteArrayDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ByteDataReference;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ChainingStreamHandler;
 
 public class SystemUseEntryHandler extends ChainingStreamHandler {
-	private Stack elements;
+	private Stack<Element> elements;
 	private int length = 0;
 	private Fixup lengthFixup;
 
 	public SystemUseEntryHandler(StructureHandler chainingStructureHandler, ContentHandler chainingContentHandler) {
 		super(chainingStructureHandler, chainingContentHandler);
-		this.elements = new Stack();
+		this.elements = new Stack<Element>();
 	}
 
+	@Override
 	public void startElement(Element element) throws HandlerException {
 		elements.push(element);
 		if (element instanceof SystemUseEntryElement) {
@@ -55,18 +63,21 @@ public class SystemUseEntryHandler extends ChainingStreamHandler {
 		super.startElement(element);
 	}
 
+	@Override
 	public void data(DataReference reference) throws HandlerException {
 		length += reference.getLength();
 		super.data(reference);
 	}
 
+	@Override
 	public Fixup fixup(DataReference reference) throws HandlerException {
 		length += reference.getLength();
 		return super.fixup(reference);
 	}
 
+	@Override
 	public void endElement() throws HandlerException {
-		Element element = (Element) elements.pop();
+		Element element = elements.pop();
 		if (element instanceof SystemUseEntryElement) {
 			// Write and close Entry Length Fixup
 			if (length > 255) {
