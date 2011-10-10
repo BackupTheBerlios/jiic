@@ -33,7 +33,6 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 public class ISO9660File implements ISO9660HierarchyObject {
 	public static final Pattern FILEPATTERN = Pattern.compile("^([^.]+)\\.(.+)$");
 	private boolean enforceDotDelimiter = false;
-	private static final long serialVersionUID = 1L;
 	private String filename, extension;
 	private int version;
 	private boolean enforce8plus3;
