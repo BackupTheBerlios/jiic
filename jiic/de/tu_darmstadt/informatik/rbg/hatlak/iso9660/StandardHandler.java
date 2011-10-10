@@ -21,8 +21,9 @@ package de.tu_darmstadt.informatik.rbg.hatlak.iso9660;
 
 import java.util.Iterator;
 
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.*;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.*;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.ChainingStreamHandler;
 
 public class StandardHandler extends ChainingStreamHandler {
 	private ISO9660Directory root;
@@ -36,9 +37,9 @@ public class StandardHandler extends ChainingStreamHandler {
 
 	public void checkMetadataFiles() throws HandlerException {
 		// Add files to Root Directory (if not already present)
-		Iterator it = config.getFiles().iterator();
+		Iterator<ISO9660File> it = config.getFiles().iterator();
 		while (it.hasNext()) {
-			ISO9660File file = (ISO9660File) it.next();		
+			ISO9660File file = it.next();		
 			// Metadata Files must conform to 8+3 naming scheme
 			if (file!=null && !root.getFiles().contains(file)) {
 				file.enforce8plus3(true);
