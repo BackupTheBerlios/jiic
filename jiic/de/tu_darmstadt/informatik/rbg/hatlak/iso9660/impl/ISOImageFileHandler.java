@@ -113,6 +113,7 @@ public class ISOImageFileHandler implements StreamHandler {
 	public void endDocument() throws HandlerException {
 		try {
 			this.dataOutputStream.close();
+			this.file.close();
 		} catch (IOException e) {
 			throw new HandlerException(e);
 		}
