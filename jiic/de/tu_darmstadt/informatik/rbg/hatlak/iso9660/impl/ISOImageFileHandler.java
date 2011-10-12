@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.DataReference;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.Element;
@@ -35,7 +36,7 @@ import de.tu_darmstadt.informatik.rbg.mhartle.sabre.StreamHandler;
 import de.tu_darmstadt.informatik.rbg.mhartle.sabre.impl.FileFixup;
 
 public class ISOImageFileHandler implements StreamHandler {
-	private File file = null;
+	private RandomAccessFile file = null;
 	private DataOutputStream dataOutputStream = null;
 	private long position = 0;
 	
@@ -49,8 +50,8 @@ public class ISOImageFileHandler implements StreamHandler {
 	 * @throws FileNotFoundException File not found
 	 */
 	public ISOImageFileHandler(File file) throws FileNotFoundException {
-		this.file = file;
-		this.dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(this.file)));
+		this.file = new RandomAccessFile(file, "rw");
+		this.dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
 	}
 
 	public void startDocument() throws HandlerException {
